@@ -31,5 +31,5 @@
                (has food p1)
                (has food p2)
         )
-
+	)
 )

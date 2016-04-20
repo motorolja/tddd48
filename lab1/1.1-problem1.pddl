@@ -17,7 +17,7 @@
                 (at hel1 loc1)
 
                 
-                (at p1 loc4)
+                (at p1 loc2)
                 (has p1 food)
                  
         )
@@ -27,4 +27,5 @@
                (has food p1)
         )
 
+	)
 )

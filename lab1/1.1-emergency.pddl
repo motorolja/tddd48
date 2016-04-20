@@ -1,5 +1,6 @@
 (define (domain WORLD)
     (:requirements :strips :typing);; require STRIPS
+    (:types crate content location person helicopter)
     (:predicates 
         ;required domain types
         (crate ?c)
@@ -8,14 +9,13 @@
         (person ?p)
         (helicopter ?h)
         ;expressions for checks
-        (occupied ?h)
+        (free ?h)
         (at ?o ?l)
         (has ?o ?t)
     )
     (:constants
-        (food medicine - content)
-        (healthy full - state)
-        (depot - location)
+        food medicine - content
+        depot - location
     )
     (:action give
         :parameters (?helicopter ?crate ?content ?person ?location)
@@ -35,16 +35,15 @@
                     ;possession confirmation
                     (has ?helicopter ?crate)
                     (has ?crate ?content)
-                    (not has ?person ?content)
                     )
         :effect (and
                     ;dropping crate
-                    (not has ?helicopter ?crate)
-                    (not occupied ?helicopter)
+                    (not (has ?helicopter ?crate))
+                    (free ?helicopter)
                     (at ?crate ?location)
 
                     ;giving content to person
-                    (not has ?crate ?content)
+                    (not (has ?crate ?content))
                     (has ?person ?content)
             )
     )
@@ -61,7 +60,7 @@
                      )
         :effect (and
                         ;moving helicopter
-                        (not at ?helicopter ?from)
+                        (not (at ?helicopter ?from))
                         (at ?helicopter ?to)
                      )
     )
@@ -76,15 +75,15 @@
                         ;location confirmation
                         (at ?helicopter ?location)
                         (at ?crate ?location)
-                        (not occupied ?helicopter)
-                     )
+                        (free ?helicopter)
+                       )
         :effect (and
                         ;taking object
-                        (not at ?crate ?location)
+                        (not (at ?crate ?location))
                         (has ?helicopter ?crate)
 
-                        ;setting helicopter as occupied
-                        (occupied ?helicopter)
+                        ;setting helicopter as not free
+                        (not (free ?helicopter))
                      )
     )
     (:action drop
@@ -104,10 +103,10 @@
         :effect (and
                         ;drop object
                         (at ?crate ?location)
-                        (not has ?helicopter ?crate)
+                        (not (has ?helicopter ?crate))
 
-                        ;setting helicopter as not occupied
-                        (not occupied ?helicopter)
+                        ;setting helicopter as free
+                        (free ?helicopter)
                      )
     )
 )
