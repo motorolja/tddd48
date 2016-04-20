@@ -52,7 +52,7 @@
         :precondition (and
                         ;type confirmation
                         (helicopter ?helicopter)
-                        (location ?from)
+                        ;(location ?from)
                         (location ?to)
 
                         ;location confirmation

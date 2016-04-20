@@ -12,12 +12,27 @@
         )
 
         (:init
-                (at depot loc1)
-                (at med_crate1 loc1)
-                (at med_crate2 loc1)
-                (at food_crate1 loc1)
-                (at hel1 loc1)
+                (crate med_crate1)
+                (crate med_crate2)
+                (crate food_crate1)
+                (location loc1)
+                (location loc2)
+                (location loc3)
+                (location loc4)
+                (person p1)
+                (person p2)
+                (helicopter hel1)
+		(free hel1)
 
+
+                (at med_crate1 depot)
+                (at med_crate2 depot)
+                (at food_crate1 depot)
+                (at hel1 depot)
+
+		(has med_crate1 medicine)
+		(has med_crate2 medicine)
+		(has food_crate1 food)
                 
                 (at p1 loc4)
                 (at p2 loc3)
