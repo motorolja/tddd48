@@ -2,12 +2,6 @@
     (:requirements :strips :typing);; require STRIPS
     (:types crate content location person helicopter)
     (:predicates 
-        ;required domain types
-        (crate ?c)
-        (content ?t)
-        (location ?l)
-        (person ?p)
-        (helicopter ?h)
         ;expressions for checks
         (free ?h)
         (at ?o ?l)
@@ -18,16 +12,13 @@
         depot - location
     )
     (:action give
-        :parameters (?helicopter ?crate ?content ?person ?location)
+        :parameters (?helicopter - helicopter
+                     ?crate - crate 
+                     ?content - content 
+                     ?person - person 
+                     ?location - location)
         :precondition (
                     and
-                    ;type confirmation
-                    (helicopter ?helicopter)
-                    (crate ?crate)
-                    (content ?content)
-                    (person ?person)
-                    (location ?location)
-
                     ;location confirmation
                     (at ?helicopter ?location)
                     (at ?person ?location)
@@ -48,13 +39,10 @@
             )
     )
     (:action move
-        :parameters (?helicopter ?from ?to)
+        :parameters (?helicopter - helicopter
+                     ?from - location
+                     ?to - location)
         :precondition (and
-                        ;type confirmation
-                        (helicopter ?helicopter)
-                        ;(location ?from)
-                        (location ?to)
-
                         ;location confirmation
                         (at ?helicopter ?from)
                      )
@@ -65,13 +53,10 @@
                      )
     )
     (:action pick
-        :parameters (?helicopter ?crate ?location)
+        :parameters (?helicopter - helicopter
+                     ?crate - crate
+                     ?location - location)
         :precondition (and
-                        ;type confirmation
-                        (helicopter ?helicopter)
-                        (crate ?crate)
-                        (location ?location)
-
                         ;location confirmation
                         (at ?helicopter ?location)
                         (at ?crate ?location)
@@ -87,13 +72,10 @@
                      )
     )
     (:action drop
-        :parameters (?helicopter ?crate ?location)
+        :parameters (?helicopter - helicopter
+                     ?crate - crate
+                     ?location - location)
         :precondition (and
-                        ;type confirmation
-                        (helicopter ?helicopter)
-                        (crate ?crate)
-                        (location ?location)
-
                         ;location confirmation
                         (at ?helicopter ?location)
 
