@@ -2,36 +2,30 @@
         (:domain WORLD)
         (:objects
                 ;; locations
-                loc1
+                loc1 - location
                 ;; crates
-                med_crate1 
+                med_crate1 - crate
                 ;; persons
-                p1 
+                p1 - person
                 ;; helicopters
-                hel1
+                hel1 - helicopter
         )
 
         (:init
-                (crate med_crate1)
-                (location loc1)
-                (person p1)
-                (helicopter hel1)
 		(free hel1)
-
+		(has med_crate1 medicine)
                 (at med_crate1 depot)
                 (at hel1 depot)
 
-
-		(has med_crate1 medicine)
+                
                 (at p1 loc1)
                 (has p1 food)
                  
         )
 
         (:goal (and
-;               (has medicine p1)
-;               (has food p1)
-               (at hel1 loc1)
+               (has p1 medicine)
+               (has p1 food)
         )
 
 	)
