@@ -1,0 +1,15 @@
+
+
+1.2
+
+How large problems can IPP solve within a one-minute time limit? 
+
+uav=1, carriers=0, locations=4, people=5, crates=10, goals=10
+
+What happens when you increase the number of crates that are not necessary
+for the problem? 
+
+The search space is increased and thus the search takes longer to
+complete.
+
+What happens when you increase the number of people that need crates? 
