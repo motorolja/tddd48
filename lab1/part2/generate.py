@@ -68,7 +68,7 @@ def distance(location_num1,location_num2):
 # function when you extend the problem generator to generate action
 # costs.
 def flight_cost(location_num1,location_num2):
-	return int(distance(location_num1,location_num2))+1	
+	return int(distance(location_num1,location_num2))+1
 
 
 # When you run this script you specify the *total* number of crates
@@ -85,7 +85,7 @@ def setup_crate_contents():
 		num_crates_with_contents.append(num)
 		crates_left = crates_left - num
 	num_crates_with_contents.append(crates_left)
-		
+
 	print "Types\tQuantities"
 	for x in range(len(num_crates_with_contents)):
 		if num_crates_with_contents[x] > 0:
@@ -103,7 +103,7 @@ def setup_crate_contents():
 	return crates_with_contents
 
 
-	
+
 # This function populates the location_coords list with an X and Y
 # coordinate for each location.  You won't have to use this other than
 # indirectly through the flight cost function.
@@ -111,7 +111,7 @@ def setup_location_coords():
 	location_coords = [(0,0)] # For the depot
 	for x in range(1,options.locations+1):
 		location_coords.append((random.randint(1,200),random.randint(1,200)))
-	print "Location positions",location_coords	
+	print "Location positions",location_coords
 	return location_coords
 
 # This function generates a random set of goals.
@@ -135,15 +135,15 @@ def setup_person_needs():
 				goals_per_contents[rand_content] += 1
 				generated = True
 	return need
-				
+
 ########################################################################################
 # Main program
 ########################################################################################
-		
+
 # Take in all arguments and print them to standard output
-		
+
 parser = OptionParser(usage='python generate [-help] options...')
-parser.add_option('-u', '--uavs',metavar='NUM', dest='uavs',action='store',type=int, help='the number of UAVs') 
+parser.add_option('-u', '--uavs',metavar='NUM', dest='uavs',action='store',type=int, help='the number of UAVs')
 parser.add_option('-r', '--carriers', metavar='NUM', type=int,dest='carriers', help='the number of carriers, for later labs')
 parser.add_option('-l', '--locations', metavar='NUM', type=int,dest='locations', help='the number of locations apart from the depot ')
 parser.add_option('-p', '--persons', metavar='NUM', type=int,dest='persons', help='the number of persons')
@@ -160,7 +160,7 @@ if (options.uavs == None or options.carriers == None or
 
 print "UAVs\t\t", options.uavs
 print "Carriers\t",options.carriers
-print "Locations\t", options.locations	
+print "Locations\t", options.locations
 print "Persons\t\t",options.persons
 print "Crates\t\t", options.crates
 print "Goals\t\t",options.goals
@@ -175,7 +175,7 @@ crate = []
 carrier = []
 location = []
 
-location.append("depot")
+# location.append("depot")
 for x in range(options.locations):
 	location.append("loc"+str(x+1))
 for x in range(options.uavs):
@@ -216,7 +216,7 @@ print f
 # Write the initial part of the problem
 
 f.write("(define (problem "+problem_name+")\n")
-f.write("(:domain uav-domain)\n")
+f.write("(:domain WORLD)\n")
 f.write("(:objects\n")
 
 ######################################################################
@@ -235,14 +235,14 @@ for x in crate:
 	f.write("\t" + x + " - crate\n")
 
 for x in crate_contents:
-	f.write("\t" + x + " - contents\n")
+	f.write("\t" + x + " - content\n")
 
 for x in person:
 	f.write("\t" + x + " - person\n")
 
 for x in carrier:
 	f.write("\t" + x + " - carrier\n")
-	
+
 f.write(")\n")
 
 ######################################################################
