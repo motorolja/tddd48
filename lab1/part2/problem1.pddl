@@ -7,15 +7,15 @@
                 med_crate1 - crate
                 ;; persons
                 p1 - person
-                ;; helicopters
-                hel1 - helicopter
+                ;; uavs
+                uav1 - uav
         )
 
         (:init
-                (free hel1)
+                (free uav1)
                 (has med_crate1 medicine)
                 (at med_crate1 depot)
-                (at hel1 depot)
+                (at uav1 depot)
 
                 
                 (at p1 loc1)

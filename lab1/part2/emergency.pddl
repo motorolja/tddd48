@@ -1,6 +1,6 @@
 (define (domain WORLD)
     (:requirements :strips :typing);; require STRIPS
-    (:types crate content location person helicopter)
+    (:types crate content location person uav)
     (:predicates 
         ;expressions for checks
         (free ?h)
@@ -12,7 +12,7 @@
         depot - location
     )
     (:action deliver
-        :parameters (?helicopter - helicopter
+        :parameters (?uav - uav
                      ?crate - crate 
                      ?content - content 
                      ?person - person 
@@ -20,72 +20,72 @@
         :precondition (
                     and
                     ;location confirmation
-                    (at ?helicopter ?location)
+                    (at ?uav ?location)
                     (at ?person ?location)
 
                     ;possession confirmation
-                    (has ?helicopter ?crate)
+                    (has ?uav ?crate)
                     (has ?crate ?content)
                     )
         :effect (and
                     ;giving crate
-                    (not (has ?helicopter ?crate))
-                    (free ?helicopter)
+                    (not (has ?uav ?crate))
+                    (free ?uav)
                     (has ?person ?crate)
                     (has ?person ?content)
             )
     )
     (:action move
-        :parameters (?helicopter - helicopter
+        :parameters (?uav - uav
                      ?from - location
                      ?to - location)
         :precondition (and
                         ;location confirmation
-                        (at ?helicopter ?from)
+                        (at ?uav ?from)
                      )
         :effect (and
-                        ;moving helicopter
-                        (not (at ?helicopter ?from))
-                        (at ?helicopter ?to)
+                        ;moving uav
+                        (not (at ?uav ?from))
+                        (at ?uav ?to)
                      )
     )
     (:action pick
-        :parameters (?helicopter - helicopter
+        :parameters (?uav - uav
                      ?crate - crate
                      ?location - location)
         :precondition (and
                         ;location confirmation
-                        (at ?helicopter ?location)
+                        (at ?uav ?location)
                         (at ?crate ?location)
-                        (free ?helicopter)
+                        (free ?uav)
                        )
         :effect (and
                         ;taking object
                         (not (at ?crate ?location))
-                        (has ?helicopter ?crate)
+                        (has ?uav ?crate)
 
-                        ;setting helicopter as not free
-                        (not (free ?helicopter))
+                        ;setting uav as not free
+                        (not (free ?uav))
                      )
     )
     (:action drop
-        :parameters (?helicopter - helicopter
+        :parameters (?uav - uav
                      ?crate - crate
                      ?location - location)
         :precondition (and
                         ;location confirmation
-                        (at ?helicopter ?location)
+                        (at ?uav ?location)
 
                         ;possession confirmation
-                        (has ?helicopter ?crate)
+                        (has ?uav ?crate)
                      )
         :effect (and
                         ;drop object
                         (at ?crate ?location)
-                        (not (has ?helicopter ?crate))
+                        (not (has ?uav ?crate))
 
-                        ;setting helicopter as free
-                        (free ?helicopter)
+                        ;setting uav as free
+                        (free ?uav)
                      )
     )
 )
