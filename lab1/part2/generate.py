@@ -285,18 +285,18 @@ f.write(")\n")
 
 f.write("(:goal (and\n")
 
+f.write("\t; All uav's end position\n")
 # All UAVs should end up at the depot
 for x in uav:
-	f.write("\n");
-	# TODO: Write a goal that the UAV x is at the depot
+        f.write("\t(at " + x + " depot)\n")
 
+f.write("\n\t; All persons need\n")
 for x in range(options.persons):
 	for y in range(len(crate_contents)):
 		if need[x][y]:
 			person_name = person[x]
 			content_name = crate_contents[y]
-			# TODO: write a goal that the person needs a crate
-			# with this specific content
+                        f.write("\t(has " + person_name + " " + content_name + ")\n")
 
-f.write("\t))\n")
+f.write("\t)\n)\n")
 f.write(")\n")
