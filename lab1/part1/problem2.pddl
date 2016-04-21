@@ -12,7 +12,7 @@
         )
 
         (:init
-        (free uav1)
+                (free uav1)
 
                 (at med_crate1 depot)
                 (at med_crate2 depot)

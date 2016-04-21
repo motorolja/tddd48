@@ -226,23 +226,30 @@ f.write("(:objects\n")
 # TODO: Change the type names below (uav, location, ...)
 # to suit your domain.
 
-for x in uav:
-	f.write("\t" + x + " - uav\n")
-
-for x in location:
-	f.write("\t" + x + " - location\n")
-
-for x in crate:
-	f.write("\t" + x + " - crate\n")
-
+f.write("\t ;defining all crate content types\n")
 for x in crate_contents:
 	f.write("\t" + x + " - content\n")
 
+f.write("\n\t ;defining all uav's\n")
+for x in uav:
+	f.write("\t" + x + " - uav\n")
+
+f.write("\n\t ;defining all locations\n")
+for x in location:
+	f.write("\t" + x + " - location\n")
+
+f.write("\n\t ;defining all crates\n")
+for x in crate:
+	f.write("\t" + x + " - crate\n")
+
+f.write("\n\t ;defining all persons\n")
 for x in person:
 	f.write("\t" + x + " - person\n")
 
-for x in carrier:
-	f.write("\t" + x + " - carrier\n")
+if(len(carrier) > 0):
+        f.write("\n\t ;defining all carriers\n")
+        for x in carrier:
+                f.write("\t" + x + " - carrier\n")
 
 f.write(")\n")
 
@@ -251,7 +258,25 @@ f.write(")\n")
 
 f.write("(:init\n")
 
-# TODO: Initialize all facts here!
+f.write("\t; initializing all uav locations and states\n")
+for x in uav:
+	f.write("\t(at " + x + " depot)\n")
+	f.write("\t(free " + x + ")\n")
+
+f.write("\n\t; initializing all crate locations\n")
+for x in crate:
+	f.write("\t(at " + x + " depot)\n")
+
+
+f.write("\n\t; add content to crates\n")
+for x in range(0,len(crates_with_contents)):
+        for c in crates_with_contents[x]:
+                f.write("\t(has " + c + " " + crate_contents[x] + ")\n")
+
+f.write("\n\t; initialize all person locations\n")
+for x in person:
+        loc = (location[random.randint(0,len(location)-1)])
+        f.write("\t(at " + x + " " + loc + ")\n")
 
 f.write(")\n")
 

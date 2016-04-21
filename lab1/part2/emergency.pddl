@@ -8,7 +8,7 @@
         (has ?o ?t)
     )
     (:constants
-        food medicine - content
+        ;food medicine - content
         depot - location
     )
     (:action deliver
