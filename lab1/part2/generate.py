@@ -81,7 +81,8 @@ def setup_crate_contents():
 	num_crates_with_contents = []
 	crates_left = options.crates
 	for x in range(len(crate_contents)-1):
-		num = random.randint(1,crates_left-(len(crate_contents)-x+1))
+                num = max(crates_left-len(crate_contents)-x+1, 0)
+		num = random.randint(0,num)
 		num_crates_with_contents.append(num)
 		crates_left = crates_left - num
 	num_crates_with_contents.append(crates_left)
