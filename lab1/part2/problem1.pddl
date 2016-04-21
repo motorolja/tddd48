@@ -12,21 +12,18 @@
         )
 
         (:init
-		(free hel1)
-		(has med_crate1 medicine)
+                (free hel1)
+                (has med_crate1 medicine)
                 (at med_crate1 depot)
                 (at hel1 depot)
 
                 
                 (at p1 loc1)
-                (has p1 food)
-                 
         )
 
         (:goal (and
                (has p1 medicine)
-               (has p1 food)
         )
 
-	)
+    )
 )
