@@ -1,6 +1,10 @@
 (define (problem emergency_prob1)
         (:domain WORLD)
         (:objects
+                 ;defining all crate content types
+                food - content
+                medicine - content
+
                 ;; locations
                 loc1 - location
                 ;; crates
