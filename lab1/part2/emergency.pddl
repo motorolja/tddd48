@@ -31,8 +31,11 @@
                     ;giving crate
                     (not (has ?uav ?crate))
                     (free ?uav)
-                    (has ?person ?crate)
                     (has ?person ?content)
+        
+                    ;; # NOT NEEDED IN THIS LAB - result is that the
+                    ;;   crate cannot be accessed anymore
+                    ;(has ?person ?crate)
             )
     )
     (:action move
@@ -68,24 +71,26 @@
                         (not (free ?uav))
                      )
     )
-    (:action drop
-        :parameters (?uav - uav
-                     ?crate - crate
-                     ?location - location)
-        :precondition (and
-                        ;location confirmation
-                        (at ?uav ?location)
-
-                        ;possession confirmation
-                        (has ?uav ?crate)
-                     )
-        :effect (and
-                        ;drop object
-                        (at ?crate ?location)
-                        (not (has ?uav ?crate))
-
-                        ;setting uav as free
-                        (free ?uav)
-                     )
-    )
+    ;; ### NOT USED IN THIS LAB ###
+;;    (
+;;     :action drop
+;;        :parameters (?uav - uav
+;;                     ?crate - crate
+;;                     ?location - location)
+;;        :precondition (and
+;;                        ;location confirmation
+;;                        (at ?uav ?location)
+;;
+;;                        ;possession confirmation
+;;                        (has ?uav ?crate)
+;;                     )
+;;        :effect (and
+;;                        ;drop object
+;;                        (at ?crate ?location)
+;;                        (not (has ?uav ?crate))
+;;
+;;                        ;setting uav as free
+;;                        (free ?uav)
+;;                     )
+;;    )
 )
