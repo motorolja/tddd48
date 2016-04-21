@@ -1,4 +1,23 @@
 # syntax should be: 
 # #uav #carriers #locations #people #crates #goals
-1 0 4 2 5 2
-1 0 4 2 1 2
+# modifying location
+1 0 1 3 6 3
+1 0 4 3 6 3
+1 0 10 3 6 3
+1 0 30 3 6 3
+
+# modifying people
+1 0 4 8 6 3
+1 0 4 15 6 3
+1 0 4 30 6 3
+
+# modifying crates
+1 0 4 3 15 3
+1 0 4 3 30 3
+1 0 4 3 60 3
+
+# changing complexity
+1 0 6 5 15 10
+1 0 6 7 20 12
+1 0 6 8 20 14
+1 0 6 10 20 20
