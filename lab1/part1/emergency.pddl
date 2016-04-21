@@ -11,7 +11,7 @@
         food medicine - content
         depot - location
     )
-    (:action give
+    (:action deliver
         :parameters (?helicopter - helicopter
                      ?crate - crate 
                      ?content - content 
@@ -28,13 +28,10 @@
                     (has ?crate ?content)
                     )
         :effect (and
-                    ;dropping crate
+                    ;giving crate
                     (not (has ?helicopter ?crate))
                     (free ?helicopter)
-                    (at ?crate ?location)
-
-                    ;giving content to person
-                    (not (has ?crate ?content))
+                    (has ?person ?crate)
                     (has ?person ?content)
             )
     )
