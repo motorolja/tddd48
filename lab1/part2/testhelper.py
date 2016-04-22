@@ -61,8 +61,8 @@ testCases = generateTestCases("testCases.info")
 
 
 f = open("timeTaken.result",'w')
-for test in testCases:
-    for planner in planners:
+for planner in planners:
+    for test in testCases:
         p = multiprocessing.Process(target=runTest, name="test", args=(planner,test,))
         start = time.time()
         p.start()
