@@ -20,7 +20,7 @@ def generateTestCases(fileName):
     f = open(fileName, 'r')
     for line in f:
         line = line.split()
-        if not (line[0][0] == "#"):
+        if (len(line > 0 and not (line[0][0] == "#")):
             if(len(line) == 6):
                 resultFile = "uav_problem_" + "_".join(line[:-1]) + "_2"
                 line[0] = "-u " + line[0]
