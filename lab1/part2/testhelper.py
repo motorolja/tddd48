@@ -1,5 +1,6 @@
 import multiprocessing
 import time
+import copy
 import os
 
 
@@ -20,9 +21,16 @@ def generateTestCases(fileName):
     f = open(fileName, 'r')
     for line in f:
         line = line.split()
-        if (len(line > 0 and not (line[0][0] == "#")):
+        if (len(line) > 0 and not (line[0][0] == "#")):
             if(len(line) == 6):
-                resultFile = "uav_problem_" + "_".join(line[:-1]) + "_2"
+                name = copy.deepcopy(line)
+                name[0] = "u"+name[0]
+                name[1] = "r"+name[1]
+                name[2] = "l"+name[2]
+                name[3] = "p"+name[3]
+                name[4] = "c"+name[4]
+                name[5] = "g"+name[5]
+                resultFile = "uav_problem_" + "_".join(name) + "_con2"
                 line[0] = "-u " + line[0]
                 line[1] = "-r " + line[1]
                 line[2] = "-l " + line[2]

@@ -206,9 +206,9 @@ location_coords = setup_location_coords()
 need = setup_person_needs()
 
 # Define a problem name
-problem_name ="uav_problem_"+str(options.uavs)+"_"+str(options.carriers)+\
-"_"+str(options.locations)+"_"+str(options.persons)+"_"+str(options.crates)+\
-"_"+str(len(crate_contents))
+problem_name ="uav_problem_u"+str(options.uavs)+"_r"+str(options.carriers)+\
+"_l"+str(options.locations)+"_p"+str(options.persons)+"_c"+str(options.crates)+\
+"_g"+str(options.goals)+"_con"+str(len(crate_contents))
 
 # Open output file
 f = open(problem_name+".pddl", 'w')
