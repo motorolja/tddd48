@@ -1,6 +1,32 @@
+1.1
+Run two small problem with ff, how long does it take?
 
+(1 person, 1 crate)   = 0.008 seconds
+Plan:
+step    0: PICK UAV1 MED_CRATE1 DEPOT
+        1: MOVE UAV1 DEPOT LOC1
+        2: DELIVER UAV1 MED_CRATE1 MEDICINE P1 LOC1
+ 
+
+(2 persons, 3 crates) = 0.011 seconds
+Plan:
+step    0: PICK UAV1 MED_CRATE2 DEPOT
+        1: MOVE UAV1 DEPOT LOC4
+        2: DELIVER UAV1 MED_CRATE2 MEDICINE P1 LOC4
+        3: MOVE UAV1 LOC4 DEPOT
+        4: PICK UAV1 MED_CRATE1 DEPOT
+        5: MOVE UAV1 DEPOT LOC3
+        6: DELIVER UAV1 MED_CRATE1 MEDICINE P2 LOC3
+        7: MOVE UAV1 LOC3 DEPOT
+        8: PICK UAV1 FOOD_CRATE1 DEPOT
+        9: MOVE UAV1 DEPOT LOC3
+       10: DELIVER UAV1 FOOD_CRATE1 FOOD P2 LOC3
 
 1.2
+Run the previous two problems in 1.1 through ipp, how long does this take?
+
+(1 person, 1 crate)  = 0.010 seconds
+(2 persons, 3 crates)  = 0.016 seconds
 
 How large problems can IPP solve within a one-minute time limit? 
 
