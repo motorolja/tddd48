@@ -1,0 +1,12 @@
+2.1:
+
+Run the problems you have created through the same (modern) planners as before, 
+and possibly a few additional planners. 
+
+What plans are generated? 
+
+Do they use the carriers?
+
+Does this differ among different planners? 
+
+Discuss your findings briefly in your report for lab 2. 
