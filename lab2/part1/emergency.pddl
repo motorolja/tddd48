@@ -1,20 +1,25 @@
 (define (domain WORLD)
-    (:requirements :strips :typing :action-cost);; require STRIPS
-    (:types crate content location person uav)
+    (:requirements :strips :typing);; :action-cost);; require STRIPS
+    (:types crate content location person uav number)
     (:predicates
         ;expressions for checks
         (free ?h)
         (at ?o ?l)
         (has ?o ?t)
+
+        ;needed to check which is the next number for counting
+        (next ?n ?n)
     )
 
-    (:functions
-        (total-cost) - number
-        (fly-cost ?from ?to -location) - number
-    )
+    ;;(:functions
+    ;;    (total-cost) - number
+    ;;    (fly-cost ?from ?to -location) - number
+    ;;)
 
     (:constants
         ;food medicine - content
+        ;numbers for counting carrier load
+        num0 num1 num2 num3 num4 - number
         depot - location
     )
     (:action deliver
@@ -58,6 +63,28 @@
                         (at ?uav ?to)
                      )
     )
+    (:action move-carrier
+        :parameters (?uav - uav
+                    ?carrier - carrier
+                    ?from - location
+                    ?to -location)
+        :precondition (and
+                        ;location confirmation
+                        (at ?uav ?from)
+                        (at ?carrier ?from)
+                        ;uav not occupied
+                        (free ?uav)
+                      )
+        :effect (and
+                        ;moving uav
+                        (not (at ?uav ?from))
+                        (at ?uav ?to)
+                        ;moving carrier
+                        (not (at ?carrier ?from))
+                        (at ?carrier ?to)
+                      )
+    )
+
     (:action pick
         :parameters (?uav - uav
                      ?crate - crate
@@ -79,11 +106,13 @@
     )
 
 ;; CARRIER interactions
-   (action: load-crate
+   (:action load-crate
             :parameters (?uav - uav
                         ?crate - crate
                         ?location - location
-                        ?carrier - carrier)
+                        ?carrier - carrier
+                        ?currentLoad - number
+                        ?nextLoad    - number)
             :precondition (and
                           ;location confirmation
                           (at ?uav ?location)
@@ -91,31 +120,50 @@
 
                           ;uav has crate
                           (has ?uav ?crate)
+
+                          ;carrier load confirmation
+                          (has ?carrier ?currentLoad)
+                          (next ?currentLoad ?nextLoad)
             )
             :effect (and
                     ; load crate
                     (has ?carrier ?crate)
+                    (has ?carrier ?nextLoad)
+                    (free ?uav)
                     (not (has ?uav ?crate))
+                    (not (has ?carrier ?currentLoad))
             )
    )
 
-   (action: unload_crate
+   (:action unload_crate
             :parameters (?uav - uav
                         ?crate - crate
                         ?location - location
-                        ?carrier - carrier)
-            :preconditions (and
+                        ?carrier - carrier
+                        ?currentLoad - number
+                        ?nextLoad    - number)
+            :precondition (and
                            ;location confirmation
                            (at ?uav ?location)
                            (at ?carrier ?location)
 
                            ;uav can carry crate
                            (free ?uav)
+
+                          ;carrier load confirmation
+                          (has ?carrier ?currentLoad)
+                          ;"currentLoad" should be next number of "nextLoad"
+                          (next ?nextLoad ?currentLoad)
             )
             :effect (and
-                    (not (free ?uav))
+                    ;give the crate to the uav
                     (has ?uav ?crate)
-                    (
+                    (not (free ?uav))
+                    ;remove crate from carrier
+                    (not (has ?carrier ?crate))
+                    ;change the load of the carrier
+                    (not (has ?carrier ?currentLoad))
+                    (has ?carrier ?nextLoad)
             )
     )
     ;; ### NOT USED IN THIS LAB ###

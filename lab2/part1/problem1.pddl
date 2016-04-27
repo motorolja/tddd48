@@ -16,6 +16,10 @@
         )
 
         (:init
+                (next num0 num1)
+                (next num1 num2)
+                (next num2 num3)
+                (next num3 num4)
                 (free uav1)
                 (has med_crate1 medicine)
                 (at med_crate1 depot)
