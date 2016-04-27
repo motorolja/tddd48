@@ -13,10 +13,17 @@
                 p1 p2 - person
                 ;; uavs
                 uav1 - uav
+
+                ;; carriers
+                car1 - carrier
         )
 
         (:init
                 (free uav1)
+                (next num0 num1)
+                (next num1 num2)
+                (next num2 num3)
+                (next num3 num4)
 
                 (at med_crate1 depot)
                 (at med_crate2 depot)
@@ -26,6 +33,9 @@
                 (has med_crate1 medicine)
                 (has med_crate2 medicine)
                 (has food_crate1 food)
+
+                (at car1 depot)
+                (has car1 num0)
                 
                 (at p1 loc4)
                 (at p2 loc3)

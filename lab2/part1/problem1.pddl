@@ -25,7 +25,7 @@
                 (at med_crate1 depot)
                 (at uav1 depot)
                 (at carrier1 depot)
-                
+                (has carrier1 num0)
                 (at p1 loc1)
         )
 
