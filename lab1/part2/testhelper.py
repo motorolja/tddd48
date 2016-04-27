@@ -3,7 +3,14 @@ import subprocess
 import time
 import copy
 import os
+import signal
+import sys
 
+
+if(len(sys.argv) == 2):
+    resultFile = sys.argv[1]
+else:
+    resultFile = "time.result"
 
 def generateTestCase(command):
     os.system(command + " >/dev/null")
@@ -63,16 +70,15 @@ def runTest(planner, test):
     print(planner[1] + " emergency.pddl " + test + ".pddl " + test + "." + planner[0] + ".result")
     #proc = subprocess.Popen(['/home/TDDD48/planners/ipp/plan emergency.pddl uav_problem_u1_r0_l4_p7_c14_g7_con2.pddl test.out'])
     #proc = subprocess.check_call([planner[1], "emergency.pddl", test+".pddl", test+"."+planner[0]+".result"])
-    proc = subprocess.Popen([planner[1],"emergency.pddl",test + ".pddl", test + "."+planner[0]+".result"])
-    #try:
-    #    outs, errs = proc.wait(timeout=65)
-    #except:
-    #    proc.kill()
-    #    return "65>"
+    proc = subprocess.Popen([planner[1],"emergency.pddl",test + ".pddl", test + "."+planner[0]+".result"],preexec_fn=os.setsid)
+    #proc = subprocess.call([planner[1],"emergency.pddl",test + ".pddl", test + "."+planner[0]+".result"],close_fds=True, shell=True)
+    while(proc.poll() == None and time.time()-start < 65.0):
+        time.sleep(0.01)
+
+    if(proc.poll() == None):
+        os.killpg(os.getpgid(proc.pid), signal.SIGTERM)
+        return "65+"
     return str("{0:.2f}".format(time.time()-start))
-
-
-
 
 
 
@@ -80,11 +86,34 @@ planners = getPlanners("planners.info")
 testCases = generateTestCases("testCases.info")
 
 
-f = open("timeTaken.result",'w')
-for planner in planners:
-    for test in testCases:
+def runPlannerTests(planner, tests, filename):
+    filename = filename+"_"+planner[0]
+    f = open(filename, 'w')
+
+    for test in tests:
         tt = runTest(planner,test)
-        f.write(planner[0] + ", " + test + "    " + tt + " seconds\n")
+        f.write(test + "     " + tt + " seconds\n")
+        f.close()
+        f = open(filename,'a')
+    f.close()
+
+
+processes = []
+for planner in planners:
+    p = multiprocessing.Process(target=runPlannerTests, name=planner[0], args=(planner,testCases, resultFile,))
+    p.start()
+    processes.append(p)
+
+for process in processes:
+    process.join()
+#f = open(resultFile,'w')
+#for planner in planners:
+#    for test in testCases:
+#        tt = runTest(planner,test)
+#        f.write(planner[0] + ", " + test + "    " + tt + " seconds\n")
+#        f.close()
+#        f = open(resultFile,'a')
+#f.close()
 
 
 

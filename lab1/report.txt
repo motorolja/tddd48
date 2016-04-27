@@ -1,4 +1,4 @@
-1.1
+1.1 ##########################################
 Run two small problem with ff, how long does it take?
 
 (1 person, 1 crate)   = 0.008 seconds
@@ -22,49 +22,84 @@ step    0: PICK UAV1 MED_CRATE2 DEPOT
         9: MOVE UAV1 DEPOT LOC3
        10: DELIVER UAV1 FOOD_CRATE1 FOOD P2 LOC3
 
-1.2
+1.2 ##########################################
 Run the previous two problems in 1.1 through ipp, how long does this take?
 
 (1 person, 1 crate)  = 0.010 seconds
 (2 persons, 3 crates)  = 0.016 seconds
 
+----------------------------------------------
 How large problems can IPP solve within a one-minute time limit? 
 
 uav=1, carriers=0, locations=4, people=5, crates=10, goals=10
 
+----------------------------------------------
 What happens when you (using IPP) increase the number of crates that are not necessary
 for the problem? 
 
-The search space is increased and thus the search takes slightly longer to
-complete. The increase in execution time is small and nearly neglectable.
+u=UAVs,r=Carriers,l=Locations,p=Persons,c=Crates,g=Goals,con=Number of content types
+    uav_problem_u1_r0_l4_p7_c14_g7_con2    12.50 seconds
+    uav_problem_u1_r0_l4_p7_c15_g7_con2    17.25 seconds
+    uav_problem_u1_r0_l4_p7_c16_g7_con2    22.77 seconds
+    uav_problem_u1_r0_l4_p7_c17_g7_con2    30.08 seconds
+    uav_problem_u1_r0_l4_p7_c18_g7_con2    38.29 seconds
+    uav_problem_u1_r0_l4_p7_c19_g7_con2    65> seconds
+    uav_problem_u1_r0_l4_p7_c20_g7_con2    36.84 seconds
+    uav_problem_u1_r0_l4_p7_c21_g7_con2    43.41 seconds
+    uav_problem_u1_r0_l4_p7_c22_g7_con2    65> seconds
+    uav_problem_u1_r0_l4_p7_c23_g7_con2    59.91 seconds
+    uav_problem_u1_r0_l4_p7_c24_g7_con2    59.43 seconds
+    uav_problem_u1_r0_l4_p7_c25_g7_con2    65> seconds
 
+
+The search space is increased and thus the search takes longer time to
+complete. The increase in time is quite high, even with only a small
+change in the amount of crates. See the result above for the time
+taken with different amount of crates.
+
+----------------------------------------------
 What happens when you (using IPP) increase the number of people that need crates? 
 
-The search space is increased and thus the search takes longer to
-complete. The increase in execution time is big.
+u=UAVs,r=Carriers,l=Locations,p=Persons,c=Crates,g=Goals,con=Number of content types
+uav_problem_u1_r0_l1_p6_c20_g6_con2    1.72 seconds
+uav_problem_u1_r0_l1_p7_c20_g7_con2    14.42 seconds
+uav_problem_u1_r0_l1_p8_c20_g8_con2    65> seconds
 
-1.3
+The search space is increased a lot. Adding one more person that need
+a crate increased the required search depth by 2, and since each
+search depth level costs exponentially higher to execute than the
+previous level the result is as seen above.
+
+1.3 ##########################################
 Selected planners (from 2014):
          yahsp3 
          bifd 
          bfs-f
 
+----------------------------------------------
 Run the largest problem generated before through the selected planners, how long until the
 first solution is generated?
+
 Had much larger problems but they required to much RAM (>64 GB) and thus got killed since we used to
 much resources.
 
+The result for the first solution is as following:
+
 u=UAVs,r=Carriers,l=Locations,p=Persons,c=Crates,g=Goals,con=Number of content types
-uav_problem_u1_r0_l6_p8_c20_g14_con2
+    uav_problem_u1_r0_l6_p8_c20_g14_con2
+    yahsp3: 0.013 seconds 
+    bifd:   0.4   seconds
+    bfs-f:  60+   seconds
 
-yahsp3: 0.013 seconds 
-bifd:   0.4   seconds
-bfs-f:  60+   seconds
-
+----------------------------------------------
 How large problems can the selected planners handle with a 1 minute time limit?
 
-u=UAVs,r=Carriers,l=Locations,p=Persons,c=Crates,g=Goals,con=Number of content types
+By using our testhelper script which has p=g=[1,10] and c=[10-15]
+these problems was found as the largest problem solved in around 1
+minute or less (any test larger than 65 seconds was ignored):
 
-yahsp3: uav_problem_u1_r0_l4_p3_c60_g3_con2    57.67 seconds
-bifd:   uav_problem_u1_r0_l4_p3_c30_g3_con2    27.85 seconds
-bfs-f:  uav_problem_u1_r0_l4_p30_c6_g3_con2    56.46 seconds
+u=UAVs,r=Carriers,l=Locations,p=Persons,c=Crates,g=Goals,con=Number of content types
+    yahsp3: uav_problem_u1_r0_l1_p9_c11_g9_con2     50.57 seconds
+    bifd:   uav_problem_u1_r0_l1_p8_c10_g8_con2     60.73 seconds
+    bfs-f:  uav_problem_u1_r0_l1_p6_c10_g6_con2     59.92 seconds
+
