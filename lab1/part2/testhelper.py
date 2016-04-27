@@ -1,4 +1,5 @@
 import multiprocessing
+import subprocess
 import time
 import copy
 import os
@@ -12,7 +13,8 @@ def getPlanners(fileName):
     planners = []
     for line in f:
         line = line.split()
-        planners.append(line)
+        if (len(line) > 0 and not (line[0][0] == "#")):
+            planners.append(line)
     f.close()
     return planners
 
@@ -57,8 +59,18 @@ def generateTestCases(fileName):
 
 
 def runTest(planner, test):
+    start = time.time()
     print(planner[1] + " emergency.pddl " + test + ".pddl " + test + "." + planner[0] + ".result")
-    os.system(planner[1] + " emergency.pddl " + test + ".pddl " + test + "." + planner[0])
+    #proc = subprocess.Popen(['/home/TDDD48/planners/ipp/plan emergency.pddl uav_problem_u1_r0_l4_p7_c14_g7_con2.pddl test.out'])
+    #proc = subprocess.check_call([planner[1], "emergency.pddl", test+".pddl", test+"."+planner[0]+".result"])
+    proc = subprocess.Popen([planner[1],"emergency.pddl",test + ".pddl", test + "."+planner[0]+".result"])
+    #try:
+    #    outs, errs = proc.wait(timeout=65)
+    #except:
+    #    proc.kill()
+    #    return "65>"
+    return str("{0:.2f}".format(time.time()-start))
+
 
 
 
@@ -71,17 +83,8 @@ testCases = generateTestCases("testCases.info")
 f = open("timeTaken.result",'w')
 for planner in planners:
     for test in testCases:
-        p = multiprocessing.Process(target=runTest, name="test", args=(planner,test,))
-        start = time.time()
-        p.start()
-        p.join(65)
-        duration = str("{0:.2f}".format(time.time()-start))
-        if p.is_alive():
-            p.terminate()
-            p.join()
-            f.write(planner[0] + ", " + test + "    >65 seconds\n")
-        else:
-            f.write(planner[0] + ", " + test + "    " + duration + " seconds\n")
+        tt = runTest(planner,test)
+        f.write(planner[0] + ", " + test + "    " + tt + " seconds\n")
 
 
 
