@@ -1,6 +1,6 @@
 (define (domain WORLD)
     (:requirements :strips :typing);; :action-cost);; require STRIPS
-    (:types crate content location person uav number)
+    (:types crate content location person uav number carrier)
     (:predicates
         ;expressions for checks
         (free ?h)

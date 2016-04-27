@@ -4,7 +4,7 @@
                  ;defining all crate content types
                 food - content
                 medicine - content
-
+                carrier1 - carrier
                 ;; locations
                 loc1 - location
                 ;; crates
@@ -24,7 +24,7 @@
                 (has med_crate1 medicine)
                 (at med_crate1 depot)
                 (at uav1 depot)
-
+                (at carrier1 depot)
                 
                 (at p1 loc1)
         )
