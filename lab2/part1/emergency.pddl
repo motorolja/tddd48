@@ -13,7 +13,7 @@
 
     ;;(:functions
     ;;    (total-cost) - number
-    ;;    (fly-cost ?from ?to -location) - number
+    ;;    (fly-cost ?from ?to - location) - number
     ;;)
 
     (:constants
@@ -67,7 +67,7 @@
         :parameters (?uav - uav
                     ?carrier - carrier
                     ?from - location
-                    ?to -location)
+                    ?to - location)
         :precondition (and
                         ;location confirmation
                         (at ?uav ?from)
