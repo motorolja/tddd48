@@ -1,4 +1,13 @@
 *.swp
 *uav_problem*
 #*#
-*.info
+*.tmp*
+output*
+plan_numbers_and_cost
+elapsed.time
+*result*
+*details
+.1
+content
+*.zip
+
