@@ -19,6 +19,8 @@ carriers in those cases where this is better according to the distances (which
 may not always be the case, if destinations are widely dispersed)? Discuss this
 briefly in your report.
 
+When using YASHP3 the planner does not care about optimizing depending on
+total-cost and instead tries to return a plan with a minimum amount of actions.  
 
 2.3:
 
