@@ -64,8 +64,6 @@
                         (not (at ?uav ?from))
                         (at ?uav ?to)
                         (increase (total-cost) (fly-cost ?from ?to))
-                        (increase (total-cost) (fly-cost ?from ?to))
-                        (increase (total-cost) (fly-cost ?from ?to))
                      )
     )
     (:action move-carrier
@@ -87,7 +85,6 @@
                         ;moving carrier
                         (not (at ?carrier ?from))
                         (at ?carrier ?to)
-                        (increase (total-cost) (fly-cost ?from ?to))
                         (increase (total-cost) (fly-cost ?from ?to))
                       )
     )
