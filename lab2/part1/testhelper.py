@@ -1,3 +1,4 @@
+#!/usr/bin/python
 import multiprocessing
 import subprocess
 import time
@@ -82,9 +83,6 @@ def runTest(planner, test):
 
 
 
-planners = getPlanners("planners.info")
-testCases = generateTestCases("testCases.info")
-
 
 def runPlannerTests(planner, tests, filename):
     filename = filename+"_"+planner[0]
@@ -98,22 +96,27 @@ def runPlannerTests(planner, tests, filename):
     f.close()
 
 
-processes = []
-for planner in planners:
-    p = multiprocessing.Process(target=runPlannerTests, name=planner[0], args=(planner,testCases, resultFile,))
-    p.start()
-    processes.append(p)
+def runProgram():
+    planners = getPlanners("planners.info")
+    testCases = generateTestCases("testCases.info")
 
-for process in processes:
-    process.join()
-#f = open(resultFile,'w')
-#for planner in planners:
-#    for test in testCases:
-#        tt = runTest(planner,test)
-#        f.write(planner[0] + ", " + test + "    " + tt + " seconds\n")
-#        f.close()
-#        f = open(resultFile,'a')
-#f.close()
+    processes = []
+    for planner in planners:
+        p = multiprocessing.Process(target=runPlannerTests, name=planner[0], args=(planner,testCases, resultFile,))
+        p.start()
+        processes.append(p)
+
+    for process in processes:
+        process.join()
 
 
 
+
+if("--build" in sys.argv):
+    generateTestCases("testCases.info")
+elif("--run" in sys.argv):
+    runProgram()
+else:
+    print("need to specify argument")
+    print("   --build - only build the testcases")
+    print("   --run   - build tests and run program")
