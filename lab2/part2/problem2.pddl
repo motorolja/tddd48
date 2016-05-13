@@ -19,11 +19,11 @@
         )
 
         (:init
-                (free uav1)
                 (next num0 num1)
                 (next num1 num2)
                 (next num2 num3)
                 (next num3 num4)
+                (free uav1)
 
                 (at med_crate1 depot)
                 (at med_crate2 depot)
@@ -46,7 +46,7 @@
                (has p1 medicine)
                (has p2 medicine)
                (has p2 food)
+               )
         )
-        (:metric (total-cost))
-    )
+        (:metric minimize (total-cost))
 )
