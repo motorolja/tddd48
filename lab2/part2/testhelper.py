@@ -7,11 +7,14 @@ import os
 import signal
 import sys
 
+resultFile = "time.result"
+for i in range(1,len(sys.argv)-1):
+    if(sys.argv[i] == "--out"):
+        resultFile = sys.argv[i+1]
+        if(resultFile[0] == '-'):
+            print("out file cannot begin with '-'")
+            exit(0)
 
-if(len(sys.argv) == 2):
-    resultFile = sys.argv[1]
-else:
-    resultFile = "time.result"
 
 def generateTestCase(command):
     os.system(command + " >/dev/null")
