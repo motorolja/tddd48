@@ -28,6 +28,11 @@
                 (at carrier1 depot)
                 (has carrier1 num0)
                 (at p1 loc1)
+
+                (= (fly-cost depot loc1) 25)
+                (= (fly-cost loc1 depot) 25)
+                (= (fly-cost loc1 loc1) 0)
+                (= (fly-cost depot depot) 0)
         )
 
         (:goal (and
