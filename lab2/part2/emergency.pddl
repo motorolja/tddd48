@@ -47,6 +47,8 @@
                     ;; # NOT NEEDED IN THIS LAB - result is that the
                     ;;   crate cannot be accessed anymore
                     ;(has ?person ?crate)
+
+                    (increase (total-cost) 5)
             )
     )
     (:action move
@@ -107,6 +109,7 @@
 
                         ;setting uav as not free
                         (not (free ?uav))
+                        (increase (total-cost) 5)
                      )
     )
 
@@ -137,6 +140,7 @@
                     (free ?uav)
                     (not (has ?uav ?crate))
                     (not (has ?carrier ?currentLoad))
+                    (increase (total-cost) 5)
             )
    )
 
@@ -169,6 +173,7 @@
                     ;change the load of the carrier
                     (not (has ?carrier ?currentLoad))
                     (has ?carrier ?nextLoad)
+                    (increase (total-cost) 5)
             )
     )
     ;; ### NOT USED IN THIS LAB ###

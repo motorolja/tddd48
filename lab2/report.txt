@@ -10,3 +10,26 @@ Do they use the carriers?
 Does this differ among different planners? 
 
 Discuss your findings briefly in your report for lab 2. 
+
+
+2.2:
+
+What plans are generated? Do they seem better than before? Do helicopters use
+carriers in those cases where this is better according to the distances (which
+may not always be the case, if destinations are widely dispersed)? Discuss this
+briefly in your report.
+
+
+2.3:
+
+For the modeling part of the lab, try some of these planners on your domain and
+problems. Do they handle all PDDL constructs that you have used? If not, you
+need to simplify your domain to work with plain STRIPS functionality. Various
+simplifications were discussed during one of the lectures. Ask your lab
+assistant if you encounter problems!
+
+
+Test the performance of these planners on your domain and problems, in terms of
+speed and quality. Are the plans better, and if so, how much better? Does it
+take more time? Do you think it is worth it for this domain? Discuss this
+briefly in your report.
