@@ -19,6 +19,7 @@
         )
 
         (:init
+                (= (total-cost) 0)
                 (next num0 num1)
                 (next num1 num2)
                 (next num2 num3)
