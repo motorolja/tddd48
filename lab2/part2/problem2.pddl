@@ -41,6 +41,34 @@
                 (at p1 loc4)
                 (at p2 loc3)
                  
+                (= (fly-cost depot depot) 0)
+                (= (fly-cost loc1 loc1) 0)
+                (= (fly-cost loc2 loc2) 0)
+                (= (fly-cost loc3 loc3) 0)
+                (= (fly-cost loc4 loc4) 0)
+
+
+                (= (fly-cost depot loc1) 25)
+                (= (fly-cost depot loc2) 25)
+                (= (fly-cost depot loc3) 25)
+                (= (fly-cost depot loc4) 25)
+                (= (fly-cost loc1 depot) 25)
+                (= (fly-cost loc2 depot) 25)
+                (= (fly-cost loc3 depot) 25)
+                (= (fly-cost loc4 depot) 25)
+
+                (= (fly-cost loc1 loc2) 10)
+                (= (fly-cost loc1 loc3) 10)
+                (= (fly-cost loc1 loc4) 10)
+                (= (fly-cost loc2 loc1) 10)
+                (= (fly-cost loc2 loc3) 10)
+                (= (fly-cost loc2 loc4) 10)
+                (= (fly-cost loc3 loc1) 10)
+                (= (fly-cost loc3 loc2) 10)
+                (= (fly-cost loc3 loc4) 10)
+                (= (fly-cost loc4 loc1) 10)
+                (= (fly-cost loc4 loc2) 10)
+                (= (fly-cost loc4 loc3) 10)
         )
 
         (:goal (and
