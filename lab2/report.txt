@@ -1,37 +1,68 @@
 2.1:
 
-Run the problems you have created through the same (modern) planners as before, 
-and possibly a few additional planners. 
+Run the problems you have created through the same (modern) planners
+as before, and possibly a few additional planners. 
 
 What plans are generated? 
+For YAHSP3:
+    The plans originally uses load-crate and unload-crate, but these
+    are executed inefficient, and are in later results completely
+    removed from the plan.
+For bfs-f & bifd:
+    These algorithms never use the carrier, at least not in the found
+    solutions.
+
 
 Do they use the carriers?
+Not in a useful way (YAHSP3).
 
 Does this differ among different planners? 
+Not among the ones we have analysed.
 
 Discuss your findings briefly in your report for lab 2. 
-
+    Generally, by using the carrier to temporarily store the crates for
+moving them in a bundle costs more actions than it saves. For storing
+and unloading the crates, two actions have to be added, plus the
+action for moving the carrier to a given location.
+    This will in the best case scenario result in 4.5 actions for
+delivering a crate, assuming that both the uav and carrier should be
+returned to the depot. 2 actions are for loading and unloading the
+crate to a carrier, 2 actions for picking up and delivering a crate,
+and 2 actions are needed to move the uav and carrier back and forth
+(these last actions can be split to each crate, giving each crate a
+cost of 0.5 actions). 
+    For normal moving the cost is 4 actions. 2 for picking up and
+delivering, and 2 to move the uav back and forth between the depot
+and location.
 
 2.2:
 
-What plans are generated? Do they seem better than before? Do helicopters use
-carriers in those cases where this is better according to the distances (which
-may not always be the case, if destinations are widely dispersed)? Discuss this
-briefly in your report.
+What plans are generated? Do they seem better than before? Do
+helicopters use carriers in those cases where this is better according
+to the distances (which may not always be the case, if destinations
+are widely dispersed)? Discuss this briefly in your report.
 
-When using YASHP3 the planner does not care about optimizing depending on
-total-cost and instead tries to return a plan with a minimum amount of actions.  
+When using YAHSP3 the planner does not care about optimizing depending
+on total-cost and instead tries to return a plan with a minimum amount
+of actions. This is due to the fact that YAHSP3 does not consider
+conditionals. 
+
+For bifd & bfs-f: 
+
+
+For freelunch:
+    
 
 2.3:
 
-For the modeling part of the lab, try some of these planners on your domain and
-problems. Do they handle all PDDL constructs that you have used? If not, you
-need to simplify your domain to work with plain STRIPS functionality. Various
-simplifications were discussed during one of the lectures. Ask your lab
-assistant if you encounter problems!
+For the modelling part of the lab, try some of these planners on your
+domain and problems. Do they handle all PDDL constructs that you have
+used? If not, you need to simplify your domain to work with plain
+STRIPS functionality. Various simplifications were discussed during
+one of the lectures. Ask your lab assistant if you encounter problems!
 
 
-Test the performance of these planners on your domain and problems, in terms of
-speed and quality. Are the plans better, and if so, how much better? Does it
-take more time? Do you think it is worth it for this domain? Discuss this
-briefly in your report.
+Test the performance of these planners on your domain and problems, in
+terms of speed and quality. Are the plans better, and if so, how much
+better? Does it take more time? Do you think it is worth it for this
+domain? Discuss this briefly in your report.
