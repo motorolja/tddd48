@@ -4,13 +4,15 @@ Run the problems you have created through the same (modern) planners
 as before, and possibly a few additional planners. 
 
 What plans are generated? 
+
 For YAHSP3:
     The plans originally uses load-crate and unload-crate, but these
-    are executed inefficient, and are in later results completely
-    removed from the plan.
+are executed inefficient, and are in later results completely
+removed from the plan.
+
 For bfs-f & bifd:
     These algorithms never use the carrier, at least not in the found
-    solutions.
+solutions.
 
 
 Do they use the carriers?
@@ -42,27 +44,57 @@ helicopters use carriers in those cases where this is better according
 to the distances (which may not always be the case, if destinations
 are widely dispersed)? Discuss this briefly in your report.
 
-When using YAHSP3 the planner does not care about optimizing depending
-on total-cost and instead tries to return a plan with a minimum amount
-of actions. This is due to the fact that YAHSP3 does not consider
-conditionals. 
+For YAHSP3:
+    When using YAHSP3, the planner does not care about optimizing
+depending on total-cost and instead tries to return a plan with a
+minimum amount of actions. This is due to the fact that YAHSP3 does
+not consider conditionals. 
 
-For bifd & bfs-f: 
+For bfs-f:
+    The algorithm was unreliable, with random crashes from code
+outside of our scope (returned error: double free or corruption).
+The times it actually ran as long as it wanted the result did not
+finish in the 65 seconds time limit that we have given it
+
+For bifd:
+    Algorithm proved to be stable, returning a correct solution and
+having several results, all having a lower action cost than the
+previous result, until it finds the best solution. The algorithm
+does not scale well with complexity when it was compared with both
+spmas, symba-1 and symba-2, which all three was able to find an
+optimal solution in a matter of seconds on the problems provided where
+bifd timed out (used 65+ seconds).
 
 
-For freelunch:
-    
+
+Our flying costs (same cost with and without carrier):
+    location -> depot = 25
+    depot -> location = 25
+    depot -> depot 0
+    locationA -> locationB = 10
+    locationA -> locationA = 0
+
+Other actions: 5
+
 
 2.3:
-
-For the modelling part of the lab, try some of these planners on your
-domain and problems. Do they handle all PDDL constructs that you have
-used? If not, you need to simplify your domain to work with plain
-STRIPS functionality. Various simplifications were discussed during
-one of the lectures. Ask your lab assistant if you encounter problems!
 
 
 Test the performance of these planners on your domain and problems, in
 terms of speed and quality. Are the plans better, and if so, how much
 better? Does it take more time? Do you think it is worth it for this
 domain? Discuss this briefly in your report.
+
+YAHSP3 did not provide a good quality plan. The plan provided was not
+optimized in a cost perspective, and thus did not solve it correctly.
+bfs-f failed to run most of the time, and when it did it timed out
+(used 65+ seconds) due to too long planning time before finding the
+most optimal solution.  
+bifd was able to solve the problems provided, without any crashes
+while planning, but it was very slow, and timed out on most of the
+tests.
+spmas, symba-1 and symba-2 were all able to solve even the most
+difficult of our problems in a matter of seconds, and the time taken
+for all three of these algorithms was very similar. The solutions
+found from all the provided problems were optimal for minimizing the
+total cost.

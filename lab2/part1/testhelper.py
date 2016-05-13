@@ -52,7 +52,7 @@ def generateTestCases(fileName):
                 line[5] = "-g " + line[5]
                 tries = 0
                 success = False
-                while(not (tries == 100 or success)):
+                while(not (tries == 1 or success)):
                     p = multiprocessing.Process(target=generateTestCase, name="testCase", args=("python generate.py " + " ".join(line),))
                     tries = tries + 1
                     p.start()
@@ -72,10 +72,7 @@ def generateTestCases(fileName):
 def runTest(planner, test):
     start = time.time()
     print(planner[1] + " emergency.pddl " + test + ".pddl " + test + "." + planner[0] + ".result")
-    #proc = subprocess.Popen(['/home/TDDD48/planners/ipp/plan emergency.pddl uav_problem_u1_r0_l4_p7_c14_g7_con2.pddl test.out'])
-    #proc = subprocess.check_call([planner[1], "emergency.pddl", test+".pddl", test+"."+planner[0]+".result"])
     proc = subprocess.Popen([planner[1],"emergency.pddl",test + ".pddl", test + "."+planner[0]+".result"],preexec_fn=os.setsid)
-    #proc = subprocess.call([planner[1],"emergency.pddl",test + ".pddl", test + "."+planner[0]+".result"],close_fds=True, shell=True)
     while(proc.poll() == None and time.time()-start < 65.0):
         time.sleep(0.01)
 
@@ -103,18 +100,26 @@ def runProgram():
     planners = getPlanners("planners.info")
     testCases = generateTestCases("testCases.info")
 
-    processes = []
-    for planner in planners:
-        p = multiprocessing.Process(target=runPlannerTests, name=planner[0], args=(planner,testCases, resultFile,))
-        p.start()
-        processes.append(p)
+    if(multithreaded):
+        processes = []
+        for planner in planners:
+            p = multiprocessing.Process(target=runPlannerTests, name=planner[0], args=(planner,testCases, resultFile,))
+            p.start()
+            processes.append(p)
 
-    for process in processes:
-        process.join()
+        for process in processes:
+            process.join()
+    else:
+        for planner in planners:
+            runPlannerTests(planner, testCases, resultFile)
 
 
 
 
+
+multithreaded = False
+if("--multithreaded" in sys.argv):
+    multithreaded = True
 if("--build" in sys.argv):
     generateTestCases("testCases.info")
 elif("--run" in sys.argv):
