@@ -141,6 +141,9 @@ if("--build" in sys.argv):
 elif("--run" in sys.argv):
     runProgram()
 else:
-    print("need to specify argument")
+    print("need to specify argument:")
     print("   --build - only build the testcases")
     print("   --run   - build tests and run program")
+    print("Optional parameters:")
+    print("   --planners <file> - specify which file to read the planners from")
+    print("   --testcases <file> - specify which file to read the testcases from")
