@@ -15,6 +15,22 @@ for i in range(1,len(sys.argv)-1):
             print("out file cannot begin with '-'")
             exit(0)
 
+plannersFile = "planners.info"
+for i in range(1,len(sys.argv)-1):
+    if(sys.argv[i] == "--planners"):
+        plannersFile = sys.argv[i+1]
+        if(plannersfile[0] == '-'):
+            print("planners file cannot begin with '-'")
+            exit(0)
+
+testCasesFile = "testCases.info"
+for i in range(1,len(sys.argv)-1):
+    if(sys.argv[i] == "--testcases"):
+        testCasesFile = sys.argv[i+1]
+        if(testCasesFile[0] == '-'):
+            print("testCases file cannot begin with '-'")
+            exit(0)
+
 
 def generateTestCase(command):
     os.system(command + " >/dev/null")
@@ -97,8 +113,8 @@ def runPlannerTests(planner, tests, filename):
 
 
 def runProgram():
-    planners = getPlanners("planners.info")
-    testCases = generateTestCases("testCases.info")
+    planners = getPlanners(plannersFile)
+    testCases = generateTestCases(testCasesFile)
 
     if(multithreaded):
         processes = []

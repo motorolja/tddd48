@@ -1,4 +1,7 @@
-ipp /home/TDDD48/planners/ipp/plan
-freelunch /home/TDDD48/planners/ipc2014/seq-sat/seq-sat-freelunch/plan
-bifd /home/TDDD48/planners/ipc2014/seq-sat/seq-sat-bifd/plan
-bfs-f /home/TDDD48/planners/ipc2014/seq-sat/seq-sat-bfs-f/plan
+#ipp /home/TDDD48/planners/ipp/plan
+#bifd /home/TDDD48/planners/ipc2014/seq-sat/seq-sat-bifd/plan
+#bfs-f /home/TDDD48/planners/ipc2014/seq-sat/seq-sat-bfs-f/plan
+#rlazya /home/TDDD48/planners/ipc2014/seq-opt/seq-opt-rlazya/plan
+spmas /home/TDDD48/planners/ipc2014/seq-opt/seq-opt-spmas/plan
+symba-1 /home/TDDD48/planners/ipc2014/seq-opt/seq-opt-symba-1/plan
+symba-2 /home/TDDD48/planners/ipc2014/seq-opt/seq-opt-symba-2/plan

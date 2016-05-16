@@ -1,3 +1,12 @@
+NOTE:
+To generate the problem files, run:
+    python testhelper.py --build
+and for part2-3:
+    python testhelper.py --build
+    python testhelper.py --build --testcases spmas_symba_testCases.info
+
+#################################################################
+Report answers:
 2.1:
 
 Run the problems you have created through the same (modern) planners
@@ -98,3 +107,6 @@ difficult of our problems in a matter of seconds, and the time taken
 for all three of these algorithms was very similar. The solutions
 found from all the provided problems were optimal for minimizing the
 total cost.
+Using more difficult tests for spmas, symba-1 and symba-2 shows that
+the solution is found slightly faster for spmas compared to both
+symba-1 and symba-2 while still finding the optimal solution.
