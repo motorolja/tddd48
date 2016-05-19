@@ -1,0 +1,12 @@
+3.1
+Which sequential planners generate plans that actually make use of all agents?
+Does it seem like there would be room for improvement?
+
+Only symba-2 and bfs-f are able to generate a plan within a reasonable (<65 seconds) time.
+
+Only symba-2 makes use of all uav's and the plans generated from bfs-f is not optimal.
+
+The plans from symba-2 only uses the uav's to load a single carrier. After that only one uav is used for delivering.
+
+3.2
+
