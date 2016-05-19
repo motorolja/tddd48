@@ -8,28 +8,39 @@ import signal
 import sys
 
 resultFile = "time.result"
-for i in range(1,len(sys.argv)-1):
-    if(sys.argv[i] == "--out"):
-        resultFile = sys.argv[i+1]
-        if(resultFile[0] == '-'):
-            print("out file cannot begin with '-'")
-            exit(0)
-
 plannersFile = "planners.info"
-for i in range(1,len(sys.argv)-1):
-    if(sys.argv[i] == "--planners"):
-        plannersFile = sys.argv[i+1]
-        if(plannersfile[0] == '-'):
-            print("planners file cannot begin with '-'")
-            exit(0)
-
 testCasesFile = "testCases.info"
-for i in range(1,len(sys.argv)-1):
-    if(sys.argv[i] == "--testcases"):
-        testCasesFile = sys.argv[i+1]
-        if(testCasesFile[0] == '-'):
-            print("testCases file cannot begin with '-'")
-            exit(0)
+multithreaded = False
+build = False
+run = False
+i = 1;
+def loadName(i):
+    if(sys.argv[i][0] == '-'):
+        print("an argument cannot begin with '-'")
+        exit(0)
+    return sys.argv[i]
+while i < len(sys.argv):
+    if(sys.argv[i] == "--out"):
+        resultFile = loadName(i+1)
+        i = i+2
+    elif(sys.argv[i] == "--planners"):
+        plannersFile = loadName(i+1)
+        i = i+2
+    elif(sys.argv[i] == "--testcases"):
+        testCasesFile = loadName(i+1)
+        i = i+2
+    elif(sys.argv[i] == "--build"):
+        build = True
+        i = i+1
+    elif(sys.argv[i] == "--run"):
+        run = True
+        i = i+1
+    elif(sys.argv[i] == "--multithreaded"):
+        multithreaded = True
+        i = i+1
+    else:
+        print("invalid argument: " + sys.argv[i])
+        exit(0)
 
 
 def generateTestCase(command):
@@ -133,12 +144,11 @@ def runProgram():
 
 
 
-multithreaded = False
 if("--multithreaded" in sys.argv):
     multithreaded = True
-if("--build" in sys.argv):
+if(build):
     generateTestCases("testCases.info")
-elif("--run" in sys.argv):
+elif(run):
     runProgram()
 else:
     print("need to specify argument:")
@@ -147,3 +157,4 @@ else:
     print("Optional parameters:")
     print("   --planners <file> - specify which file to read the planners from")
     print("   --testcases <file> - specify which file to read the testcases from")
+    print("   --multithreaded - run one thread for each different planner")

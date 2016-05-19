@@ -223,8 +223,10 @@ f.write("(:objects\n")
 ######################################################################
 # Write objects
 
-# TODO: Change the type names below (uav, location, ...)
-# to suit your domain.
+f.write("\t; define all constants (the planners does not allow\n")
+f.write("\t; constant declarations in domain T________T )\n")
+f.write("\tnum0 num1 num2 num3 num4 - num\n")
+f.write("\tdepot - location\n")
 
 f.write("\t ;defining all crate content types\n")
 for x in crate_contents:
@@ -257,8 +259,6 @@ f.write(")\n")
 # Generate an initial state
 
 f.write("(:init\n")
-f.write("\t; initializing total cost numbers\n")
-f.write("\t(= (total-cost) 0)\n")
 
 f.write("\n\t; initializing all the numbers\n")
 f.write("\t(next num0 num1)\n")
@@ -291,24 +291,24 @@ for x in person:
         loc = (location[random.randint(0,len(location)-1)])
         f.write("\t(at " + x + " " + loc + ")\n")
 
-f.write("\n\t ;defining all location costs\n")
-f.write("\t ;this has three steps, first, define the cost for loc_X -> loc_X\n")
-f.write("\t(= (fly-cost depot depot) 0 )\n") # adding the depot default location
-for x in location:
-	f.write("\t(= (fly-cost " + x + " " + x + ") 0 )\n")
-
-f.write("\n\t ;second, define the cost for depot->loc_X and loc_X->depot\n")
-for x in location:
-	f.write("\t(= (fly-cost depot " + x + ") 25 )\n")
-	f.write("\t(= (fly-cost " + x + " depot) 25 )\n")
-
-f.write("\n\t ;third, define the cost for loc_X->loc_Y and loc_Y->\n")
-
-for x in location:
-        for y in location:
-                if x != y:
-	                f.write("\t(= (fly-cost " + x + " " + y + ") 10 )\n")
-
+#f.write("\n\t ;defining all location costs\n")
+#f.write("\t ;this has three steps, first, define the cost for loc_X -> loc_X\n")
+#f.write("\t(= (fly-cost depot depot) 0 )\n") # adding the depot default location
+#for x in location:
+#	f.write("\t(= (fly-cost " + x + " " + x + ") 0 )\n")
+#
+#f.write("\n\t ;second, define the cost for depot->loc_X and loc_X->depot\n")
+#for x in location:
+#	f.write("\t(= (fly-cost depot " + x + ") 25 )\n")
+#	f.write("\t(= (fly-cost " + x + " depot) 25 )\n")
+#
+#f.write("\n\t ;third, define the cost for loc_X->loc_Y and loc_Y->\n")
+#
+#for x in location:
+#        for y in location:
+#                if x != y:
+#	                f.write("\t(= (fly-cost " + x + " " + y + ") 10 )\n")
+#
 f.write(")\n")
 
 ######################################################################
@@ -334,5 +334,5 @@ for x in range(options.persons):
                         f.write("\t(has " + person_name + " " + content_name + ")\n")
 
 f.write("\t)\n)\n")
-f.write("\t(:metric minimize (total-cost))")
+#f.write("\t(:metric minimize (total-cost))")
 f.write(")\n")
