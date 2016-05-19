@@ -150,6 +150,9 @@
                            ;uav can carry crate
                            (free ?uav)
 
+                          ;carrier has crate loaded on it
+                          (has ?carrier ?crate)
+
                           ;carrier load confirmation
                           (has ?carrier ?currentLoad)
                           ;"currentLoad" should be next number of "nextLoad"

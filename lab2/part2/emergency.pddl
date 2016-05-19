@@ -149,12 +149,15 @@
                         ?currentLoad - number
                         ?nextLoad    - number)
             :precondition (and
-                           ;location confirmation
-                           (at ?uav ?location)
-                           (at ?carrier ?location)
+                          ;location confirmation
+                          (at ?uav ?location)
+                          (at ?carrier ?location)
 
-                           ;uav can carry crate
-                           (free ?uav)
+                          ;uav can carry crate
+                          (free ?uav)
+
+                          ;carrier has crate loaded on it
+                          (has ?carrier ?crate)
 
                           ;carrier load confirmation
                           (has ?carrier ?currentLoad)

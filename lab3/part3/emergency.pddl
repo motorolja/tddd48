@@ -1,198 +1,189 @@
 (define (domain WORLD)
-    (:requirements :strips :typing :action-costs);; require STRIPS
-    (:types crate content location person uav number carrier)
+    (:requirements :typing :durative-actions)
+
+    (:types 
+        crate content location person uav num carrier - object
+    )
     (:predicates
         ;expressions for checks
-        (free ?h)
-        (at ?o ?l)
-        (has ?o ?t)
+        (free ?h - uav)
+        (at ?o - object ?l - location)
+        (has ?o ?t - object)
 
         ;needed to check which is the next number for counting
-        (next ?n ?n)
+        (next ?n ?m - num)
     )
 
     (:functions
-        (total-cost) - number
         (fly-cost ?from ?to - location) - number
     )
 
-    (:constants
-        ;food medicine - content
-        ;numbers for counting carrier load
-        num0 num1 num2 num3 num4 - number
-        depot - location
-    )
-    (:action deliver
+    ;(:constants
+    ;    ;food medicine - content
+    ;    ;numbers for counting carrier load
+    ;    num0 num1 num2 num3 num4 - num
+    ;    depot - location
+    ;)
+    (:durative-action deliver
         :parameters (?uav - uav
                      ?crate - crate 
                      ?content - content 
                      ?person - person 
                      ?location - location)
-        :precondition (
+        :duration (= ?duration 5)
+        :condition (
                     and
                     ;location confirmation
-                    (at ?uav ?location)
-                    (at ?person ?location)
+                    (over all (at ?uav ?location))
+                    (over all (at ?person ?location))
 
                     ;possession confirmation
-                    (has ?uav ?crate)
-                    (has ?crate ?content)
+                    (at start (has ?uav ?crate))
+                    (over all (has ?crate ?content))
                     )
         :effect (and
                     ;giving crate
-                    (not (has ?uav ?crate))
-                    (free ?uav)
-                    (has ?person ?content)
-        
-                    ;; # NOT NEEDED IN THIS LAB - result is that the
-                    ;;   crate cannot be accessed anymore
-                    ;(has ?person ?crate)
-
-                    (increase (total-cost) 5)
-            )
+                    (at start (not (has ?uav ?crate)))
+                    (at end (free ?uav))
+                    (at end (has ?person ?content))
+                )
     )
-    (:action move
+    (:durative-action move
         :parameters (?uav - uav
                      ?from - location
                      ?to - location)
-        :precondition (and
+        :duration (= ?duration 10)
+        :condition (and
                         ;location confirmation
-                        (at ?uav ?from)
+                        (at start (at ?uav ?from))
                      )
         :effect (and
                         ;moving uav
-                        (not (at ?uav ?from))
-                        (at ?uav ?to)
-                        (increase (total-cost) (fly-cost ?from ?to))
+                        (at start (not (at ?uav ?from)))
+                        (at end (at ?uav ?to))
                      )
     )
-    (:action move-carrier
+    (:durative-action move-carrier
         :parameters (?uav - uav
                     ?carrier - carrier
                     ?from - location
                     ?to - location)
-        :precondition (and
+        :duration (= ?duration 10)
+        :condition (and
                         ;location confirmation
-                        (at ?uav ?from)
-                        (at ?carrier ?from)
+                        (at start (at ?uav ?from))
+                        (at start (at ?carrier ?from))
                         ;uav not occupied
-                        (free ?uav)
+                        (at start(free ?uav))
                       )
         :effect (and
-                        ;moving uav
-                        (not (at ?uav ?from))
-                        (at ?uav ?to)
-                        ;moving carrier
-                        (not (at ?carrier ?from))
-                        (at ?carrier ?to)
-                        (increase (total-cost) (fly-cost ?from ?to))
+                        ; setting uav as not being free
+                        (at start (not (free ?uav)))
+
+                        ;removing start location
+                        (at start (not (at ?uav ?from)))
+                        (at start (not (at ?carrier ?from)))
+                        ;adding end position
+                        (at end (at ?uav ?to))
+                        (at end (at ?carrier ?to))
+
+                        ; setting uav as being free
+                        (at end (free ?uav))
                       )
     )
 
-    (:action pick
+    (:durative-action pick
         :parameters (?uav - uav
                      ?crate - crate
                      ?location - location)
-        :precondition (and
+        :duration (= ?duration 5)
+        :condition (and
                         ;location confirmation
-                        (at ?uav ?location)
-                        (at ?crate ?location)
-                        (free ?uav)
+                        (over all (at ?uav ?location))
+                        (at start (at ?crate ?location))
+                        (at start (free ?uav))
                        )
         :effect (and
                         ;taking object
-                        (not (at ?crate ?location))
-                        (has ?uav ?crate)
+                        (at start (not (at ?crate ?location)))
+                        (at end (has ?uav ?crate))
 
                         ;setting uav as not free
-                        (not (free ?uav))
-                        (increase (total-cost) 5)
+                        (at start (not (free ?uav)))
                      )
     )
 
 ;; CARRIER interactions
-   (:action load-crate
+   (:durative-action load-crate
             :parameters (?uav - uav
                         ?crate - crate
                         ?location - location
                         ?carrier - carrier
-                        ?currentLoad - number
-                        ?nextLoad    - number)
-            :precondition (and
+                        ?currentLoad - num
+                        ?nextLoad    - num)
+            :duration (= ?duration 5) 
+            :condition (and
                           ;location confirmation
-                          (at ?uav ?location)
-                          (at ?carrier ?location)
+                          (over all (at ?uav ?location))
+                          (over all (at ?carrier ?location))
 
                           ;uav has crate
-                          (has ?uav ?crate)
+                          (at start (has ?uav ?crate))
 
                           ;carrier load confirmation
-                          (has ?carrier ?currentLoad)
-                          (next ?currentLoad ?nextLoad)
+                          (at start (has ?carrier ?currentLoad))
+                          (over all (next ?currentLoad ?nextLoad))
             )
             :effect (and
-                    ; load crate
-                    (has ?carrier ?crate)
-                    (has ?carrier ?nextLoad)
-                    (free ?uav)
-                    (not (has ?uav ?crate))
-                    (not (has ?carrier ?currentLoad))
-                    (increase (total-cost) 5)
+                    ; change the current load
+                    (at start (not (has ?carrier ?currentLoad)))
+                    (at start (has ?carrier ?nextLoad))
+
+                    ; remove the crate from uav
+                    (at start (not (has ?uav ?crate)))
+
+                    ; add crate to carrier  and set uav as being free
+                    (at end (has ?carrier ?crate))
+                    (at end (free ?uav))
             )
    )
 
-   (:action unload_crate
+   (:durative-action unload_crate
             :parameters (?uav - uav
                         ?crate - crate
                         ?location - location
                         ?carrier - carrier
-                        ?currentLoad - number
-                        ?nextLoad    - number)
-            :precondition (and
-                           ;location confirmation
-                           (at ?uav ?location)
-                           (at ?carrier ?location)
+                        ?currentLoad - num
+                        ?nextLoad    - num)
+            :duration (= ?duration 5)
+            :condition (and
+                          ;location confirmation
+                          (over all (at ?uav ?location))
+                          (over all (at ?carrier ?location))
 
-                           ;uav can carry crate
-                           (free ?uav)
+                          ;uav can carry crate
+                          (at start (free ?uav))
 
-                          ;carrier load confirmation
-                          (has ?carrier ?currentLoad)
+                          ;carrier has crate loaded on it
+                          (at start (has ?carrier ?crate))
+
+                          ;carrier load confirmation (updated at the end)
+                          (at end (has ?carrier ?currentLoad))
+
                           ;"currentLoad" should be next number of "nextLoad"
-                          (next ?nextLoad ?currentLoad)
+                          (over all (next ?nextLoad ?currentLoad))
             )
             :effect (and
+                    ; set uav as not free and remove crate from carrier
+                    (at start (not (has ?carrier ?crate)))
+                    (at start (not (free ?uav)))
+
                     ;give the crate to the uav
-                    (has ?uav ?crate)
-                    (not (free ?uav))
-                    ;remove crate from carrier
-                    (not (has ?carrier ?crate))
+                    (at end (has ?uav ?crate))
+
                     ;change the load of the carrier
-                    (not (has ?carrier ?currentLoad))
-                    (has ?carrier ?nextLoad)
-                    (increase (total-cost) 5)
+                    (at end (not (has ?carrier ?currentLoad)))
+                    (at end (has ?carrier ?nextLoad))
             )
     )
-    ;; ### NOT USED IN THIS LAB ###
-;;    (
-;;     :action drop
-;;        :parameters (?uav - uav
-;;                     ?crate - crate
-;;                     ?location - location)
-;;        :precondition (and
-;;                        ;location confirmation
-;;                        (at ?uav ?location)
-;;
-;;                        ;possession confirmation
-;;                        (has ?uav ?crate)
-;;                     )
-;;        :effect (and
-;;                        ;drop object
-;;                        (at ?crate ?location)
-;;                        (not (has ?uav ?crate))
-;;
-;;                        ;setting uav as free
-;;                        (free ?uav)
-;;                     )
-;;    )
 )
