@@ -1,12 +1,76 @@
 3.1
-Which sequential planners generate plans that actually make use of all agents?
-Does it seem like there would be room for improvement?
+Which sequential planners generate plans that actually make use of all
+agents?  Does it seem like there would be room for improvement?
 
-Only symba-2 and bfs-f are able to generate a plan within a reasonable (<65 seconds) time.
+Only symba-2 and bfs-f are able to generate a plan within a reasonable
+(<65 seconds) time.
 
-Only symba-2 makes use of all uav's and the plans generated from bfs-f is not optimal.
+Only symba-2 makes use of all uav's and the plans generated from bfs-f
+is not optimal.
 
-The plans from symba-2 only uses the uav's to load a single carrier. After that only one uav is used for delivering.
+The plans from symba-2 only uses the uav's to load a single carrier.
+After that only one uav is used for delivering.
 
 3.2
+Describe in your report how you ensured that rovers do not send
+multiple pieces of data at any given time. 
 
+We introduced a "lock" which is taken at the start of the "send"
+action, and released at the end of the "send" action. See the code
+below for our changes, the changes are marked with arrows.
+
+All temporal satisficing planners available in ipc2014 successfully
+generates a good plan without any concurrent sends.
+
+<skipping code>
+    (:predicates
+        (at ?rover - rover ?location - location)
+        (acquired ?rover - rover ?d - data)
+---->   (available ?r - rover)
+        (sent ?d - data)
+        (path-between ?a ?u - location)
+    )
+<skipping code>
+    (:durative-action send
+        :parameters (?r - rover ?d - data ?loc - location)
+        :duration (= ?duration 2)
+        :condition (and 
+---->                (at start (available ?r))
+                     (over all (acquired ?r ?d))
+                     (over all (at ?r ?loc)))
+        :effect ( and
+---->               (at start (not (available ?r)))
+                    (at end (sent ?d))
+---->               (at end (available ?r))
+                )
+    )
+)
+
+3.3
+How large problems can be generated in one minute? 
+
+(ipc2014 algorithms only)
+yahsp3: All except the simplest problem (problem1.pddl) took
+    longer than 60 seconds
+temporal-fast-downward: All except the simplest problem
+    (problem1.pddl) took longer than 60 seconds
+itsat: 
+    
+
+How are the planners affected when you vary different parameters, such
+as the number of UAVs or the number of crates? 
+
+yahsp3: All except the simplest problems (problem1.pddl) took
+    longer than 60 seconds
+temporal-fast-downward: All except the simplest problems
+    (problem1.pddl) took longer than 60 seconds
+itsat: 
+
+3.4
+You may allow several robots to place a crate onto a carrier
+concurrently. If this leads to problems with your domain formulation,
+explain why (in your lab report) ensure that only one robot can place
+a crate onto a given carrier at any given time. 
+
+We can load concurrently to the carrier without any problem with
+overloading the carrier. 
