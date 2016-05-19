@@ -145,6 +145,7 @@ def setup_person_needs():
 
 parser = OptionParser(usage='python generate [-help] options...')
 parser.add_option('-u', '--uavs',metavar='NUM', dest='uavs',action='store',type=int, help='the number of UAVs')
+parser.add_option('-b', '--robots',metavar='NUM', dest='robots',action='store',type=int, help='the number Robots')
 parser.add_option('-r', '--carriers', metavar='NUM', type=int,dest='carriers', help='the number of carriers, for later labs')
 parser.add_option('-l', '--locations', metavar='NUM', type=int,dest='locations', help='the number of locations apart from the depot ')
 parser.add_option('-p', '--persons', metavar='NUM', type=int,dest='persons', help='the number of persons')
@@ -153,13 +154,14 @@ parser.add_option('-g', '--goals', metavar='NUM', type=int,dest='goals', help='t
 
 (options,args) = parser.parse_args()
 
-if (options.uavs == None or options.carriers == None or
+if (options.uavs == None or options.robots or options.carriers == None or
     options.locations == None or options.persons == None or
     options.crates == None or options.goals == None):
 	print "You must specify all options (use -help for help)"
 	sys.exit(1)
 
 print "UAVs\t\t", options.uavs
+print "Robots\t\t", options.robots
 print "Carriers\t",options.carriers
 print "Locations\t", options.locations
 print "Persons\t\t",options.persons
@@ -171,6 +173,7 @@ print "Goals\t\t",options.goals
 # These lists contain the names of all UAVs, locations, and so on.
 
 uav = []
+robot = []
 person = []
 crate = []
 carrier = []
@@ -187,6 +190,8 @@ for x in range(options.crates):
 	crate.append("crate"+str(x+1))
 for x in range(options.carriers):
 	carrier.append("carrier"+str(x+1))
+for x in range(options.robots):
+	robot.append("rob"+str(x+1))
 
 # Determine the set of crates for each content.
 # If crate_contents[0] is "food",
@@ -206,7 +211,7 @@ location_coords = setup_location_coords()
 need = setup_person_needs()
 
 # Define a problem name
-problem_name ="uav_problem_u"+str(options.uavs)+"_r"+str(options.carriers)+\
+problem_name="uav_problem_u"+str(options.uavs)+"_b"+str(options.robots+"_r"+str(options.carriers)+\
 "_l"+str(options.locations)+"_p"+str(options.persons)+"_c"+str(options.crates)+\
 "_g"+str(options.goals)+"_con"+str(len(crate_contents))
 
@@ -235,6 +240,10 @@ for x in crate_contents:
 f.write("\n\t ;defining all uav's\n")
 for x in uav:
 	f.write("\t" + x + " - uav\n")
+
+f.write("\n\t ;defining all robots\n")
+for x in robot:
+	f.write("\t" + x + " - robot\n")
 
 f.write("\n\t ;defining all locations\n")
 for x in location:
@@ -267,6 +276,11 @@ f.write("\t(next num2 num3)\n")
 f.write("\t(next num3 num4)\n")
 
 f.write("\n\t; initializing all uav locations and states\n")
+for x in uav:
+	f.write("\t(at " + x + " depot)\n")
+	f.write("\t(free " + x + ")\n")
+
+f.write("\n\t; initializing all robot locations and states\n")
 for x in uav:
 	f.write("\t(at " + x + " depot)\n")
 	f.write("\t(free " + x + ")\n")
