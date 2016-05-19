@@ -4,6 +4,7 @@
               r1 - rover loc1 - location)
     (:init (acquired r1 d1) (acquired r1 d2) (acquired r1 d3)
            (acquired r1 d4) (acquired r1 d5) (acquired r1 d6)
+           (available r1)
            (at r1 loc1))
     (:goal (and (sent d1) (sent d2) (sent d3)
            (sent d4) (sent d5) (sent d6)))

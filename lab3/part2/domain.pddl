@@ -4,8 +4,10 @@
     (:predicates
         (at ?rover - rover ?location - location)
         (acquired ?rover - rover ?d - data)
+        (available ?r - rover)
         (sent ?d - data)
-        (path-between ?a ?u - location))
+        (path-between ?a ?u - location)
+    )
     
     (:durative-action drive
         :parameters (?r - rover ?from ?to - location)
@@ -19,7 +21,14 @@
     (:durative-action send
         :parameters (?r - rover ?d - data ?loc - location)
         :duration (= ?duration 2)
-        :condition (and (over all (acquired ?r ?d))
+        :condition (and 
+                     (at start (available ?r))
+                     (over all (acquired ?r ?d))
                      (over all (at ?r ?loc)))
-        :effect (at end (sent ?d)))
+        :effect ( and
+                    (at start (not (available ?r)))
+                    (at end (sent ?d))
+                    (at end (available ?r))
+                )
+    )
 )
