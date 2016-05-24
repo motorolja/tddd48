@@ -1,0 +1,53 @@
+(defdomain domain
+    (
+        (:operator (!pickup ?item ?uav) 
+            ;; Preconditions
+            (and (at ?item ?location) (and (at ?uav ?location) (free ?uav) ) )
+            
+            ;; Delete effects
+            ((free ?uav)) 
+            
+            ;; Add effects
+            ((holding ?item ?uav))
+        )
+        
+        (:operator (!deliver ?item ?person ?uav)
+            ;; Preconditions
+            (and (holding ?item ?uav) (and (at ?person ?location) (and (at ?uav
+            ?location) (need ?person ?item) ) ) ) 
+            
+            ;; Delete effects
+            (and (have ?item ?uav) (need ?person ?item) )
+            
+            ;; Add effects
+            () 
+        )
+
+        (:operator (!move ?uav ?to-location)
+            ;; Preconditions
+            (and (not (at ?uav ?to-location) ) )
+            
+            ;; Delete effects
+            (and (have ?item ?uav) (and (need ?person ?item) 
+            (forall (?l) (at ?uav ?l) (at ?uav ?l) ) ) )
+            
+            ;; Add effects
+            (and (at ?uav ?to-location) )
+        )
+
+        (:operator (!deliver ?item ?location ?person ?uav)
+            ;; Preconditions
+            (and (holding ?item ?uav) (and (at ?person ?location) (and (at ?uav
+            ?location) (need ?person ?item) ) ) ) 
+            
+            ;; Delete effects
+            (and (have ?item ?uav) (need ?person ?item) )
+            
+            ;; Add effects
+            () 
+        )
+
+
+    )
+
+)
