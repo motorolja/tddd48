@@ -1,0 +1,5 @@
+itsat /home/TDDD48/planners/ipc2014/tempo-sat/tempo-sat-itsat/plan
+# below algorithm is too slow for anything - it has a complete search
+#tem_fast_downward /home/TDDD47/planners/ipc2014/tempo-sat/tempo-sat-temporal-fast-downward/plan
+#
+#yahsp3 /home/TDDD48/planners/ipc2014/tempo-sat/tempo-sat-yahsp3/plan

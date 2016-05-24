@@ -154,7 +154,7 @@ parser.add_option('-g', '--goals', metavar='NUM', type=int,dest='goals', help='t
 
 (options,args) = parser.parse_args()
 
-if (options.uavs == None or options.robots or options.carriers == None or
+if (options.uavs == None or options.robots == None or options.carriers == None or
     options.locations == None or options.persons == None or
     options.crates == None or options.goals == None):
 	print "You must specify all options (use -help for help)"
@@ -191,7 +191,7 @@ for x in range(options.crates):
 for x in range(options.carriers):
 	carrier.append("carrier"+str(x+1))
 for x in range(options.robots):
-	robot.append("rob"+str(x+1))
+	robot.append("robots"+str(x+1))
 
 # Determine the set of crates for each content.
 # If crate_contents[0] is "food",
@@ -211,7 +211,7 @@ location_coords = setup_location_coords()
 need = setup_person_needs()
 
 # Define a problem name
-problem_name="uav_problem_u"+str(options.uavs)+"_b"+str(options.robots+"_r"+str(options.carriers)+\
+problem_name="uav_problem_u"+str(options.uavs)+"_b"+str(options.robots)+"_r"+str(options.carriers)+\
 "_l"+str(options.locations)+"_p"+str(options.persons)+"_c"+str(options.crates)+\
 "_g"+str(options.goals)+"_con"+str(len(crate_contents))
 
@@ -281,7 +281,7 @@ for x in uav:
 	f.write("\t(free " + x + ")\n")
 
 f.write("\n\t; initializing all robot locations and states\n")
-for x in uav:
+for x in robot:
 	f.write("\t(at " + x + " depot)\n")
 	f.write("\t(free " + x + ")\n")
 

@@ -54,8 +54,27 @@ yahsp3: All except the simplest problem (problem1.pddl) took
     longer than 60 seconds
 temporal-fast-downward: All except the simplest problem
     (problem1.pddl) took longer than 60 seconds
-itsat: 
+itsat: The algorithm manage to solve at the highest a problem
+    containing 4 uav:s, 2 carriers, 5 locations, 3 people, 13 crates and
+    3 goals. This problem took exactly 1 minute to solve
     
+    a matrix showing the time taken given different parameters follows
+    below:
+        constant parameters: 4 uav:s, 2 carriers, 2 container types
+        value is number of seconds taken
+
+goals & --|--------|--------|--------|--------|--------|-------|
+people  1 | 35.85  | 39.03  | 43.10  | 46.69  | 50.76  | 55.07 |
+        --|--------|--------|--------|--------|--------|-------|
+        2 | 38.05  | 44.49  | 46.61  | 52.48  | 57.78  | 60.49 |
+        --|--------|--------|--------|--------|--------|-------|
+        3 | 44.59  | 48.40  | 53.16  | 60.01  | 64.78  | 65+   |
+        --|--------|--------|--------|--------|--------|-------|
+        4 | 65+    | 65+    | 65+    | 65+    | 65+    | 65+   |
+        ==|========|========|========|========|========|=======|
+          | 10     | 11     | 12     | 13     | 14     | 15    |
+     #crates     
+
 
 How are the planners affected when you vary different parameters, such
 as the number of UAVs or the number of crates? 
@@ -65,6 +84,25 @@ yahsp3: All except the simplest problems (problem1.pddl) took
 temporal-fast-downward: All except the simplest problems
     (problem1.pddl) took longer than 60 seconds
 itsat: 
+   Increasing crates slightly increase the search time while an
+   increase of UAVs has a greater effect since there are more
+   combinations of actions to search through.  
+
+constant parameters:
+    carrier: 2       
+    locations: 5
+    people: 1
+    goals: 1
+
+
+crates  ||  4 uav:s   5 uav:s
+-----------------------------
+  10    ||   34.74s     44.93s 
+  11    ||   38.63s     49.68s 
+  12    ||   42.01s     55.26s
+  13    ||   45.92s     60.58s
+  14    ||   50.13s     65+s
+  15    ||   55.30s     65+s
 
 3.4
 You may allow several robots to place a crate onto a carrier
@@ -73,4 +111,4 @@ explain why (in your lab report) ensure that only one robot can place
 a crate onto a given carrier at any given time. 
 
 We can load concurrently to the carrier without any problem with
-overloading the carrier. 
+overloading the carrier or experiencing any other misbehaviour.

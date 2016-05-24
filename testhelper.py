@@ -62,23 +62,21 @@ def generateTestCases(fileName):
     for line in f:
         line = line.split()
         if (len(line) > 0 and not (line[0][0] == "#")):
-            if(len(line) == 7):
+            if(len(line) == 6):
                 name = copy.deepcopy(line)
                 name[0] = "u"+name[0]
-                name[1] = "b"+name[1]
-                name[2] = "r"+name[2]
-                name[3] = "l"+name[3]
-                name[4] = "p"+name[4]
-                name[5] = "c"+name[5]
-                name[6] = "g"+name[6]
+                name[1] = "r"+name[1]
+                name[2] = "l"+name[2]
+                name[3] = "p"+name[3]
+                name[4] = "c"+name[4]
+                name[5] = "g"+name[5]
                 resultFile = "uav_problem_" + "_".join(name) + "_con2"
                 line[0] = "-u " + line[0]
-                line[1] = "-b " + line[1]
-                line[2] = "-r " + line[2]
-                line[3] = "-l " + line[3]
-                line[4] = "-p " + line[4]
-                line[5] = "-c " + line[5]
-                line[6] = "-g " + line[6]
+                line[1] = "-r " + line[1]
+                line[2] = "-l " + line[2]
+                line[3] = "-p " + line[3]
+                line[4] = "-c " + line[4]
+                line[5] = "-g " + line[5]
                 tries = 0
                 success = False
                 while(not (tries == 1 or success)):
