@@ -39,7 +39,7 @@
 
                     ;possession confirmation
                     (at start (has ?uav ?crate))
-                    (over all (has ?crate ?content))
+                    (at start (has ?crate ?content))
                     )
         :effect (and
                     ;giving crate
@@ -132,7 +132,7 @@
 
                           ;carrier load confirmation
                           (at start (has ?carrier ?currentLoad))
-                          (over all (next ?currentLoad ?nextLoad))
+                          (at start (next ?currentLoad ?nextLoad))
             )
             :effect (and
                     ; change the current load
@@ -171,7 +171,7 @@
                           (at end (has ?carrier ?currentLoad))
 
                           ;"currentLoad" should be next number of "nextLoad"
-                          (over all (next ?nextLoad ?currentLoad))
+                          (at start (next ?nextLoad ?currentLoad))
             )
             :effect (and
                     ; set uav as not free and remove crate from carrier
