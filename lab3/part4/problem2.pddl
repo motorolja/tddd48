@@ -82,5 +82,4 @@
                (has p2 food)
                )
         )
-        (:metric minimize (total-cost))
 )
