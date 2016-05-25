@@ -1,0 +1,31 @@
+(defproblem problem domain
+    ;;facts
+    (
+        ;; init locations
+        (location depot)
+        (location loc1)
+
+        ;; init items
+        (pickable item1)
+        (at item1 depot)
+        (has item1 medicine)
+        (pickable item2)
+        (at item2 depot)
+        (has item2 food)
+
+        ;; init UAVs
+        (uav uav1)
+        (at uav1 depot)
+        (free uav1)
+
+        ;; init persons
+        (person person1)
+        (at person1 loc1)
+        (need person1 medicine)
+        (need person1 food)
+    )
+    ;;goals
+    (
+        (do_all_deliver)
+    )
+)

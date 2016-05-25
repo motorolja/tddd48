@@ -1,0 +1,186 @@
+(defdomain domain
+    (
+        (:operator (!pickup ?loc ?uav ?item)
+            ;; Preconditions
+            (
+                (uav ?uav)
+                (free ?uav)
+                (at ?uav ?loc)
+                (has ?loc ?item ?itemAmount)
+                (call >= ?itemAmount 1)
+            )
+            
+            ;; Delete effects
+            (
+                (free ?uav)
+                (has ?loc ?item ?itemAmount)
+            )
+            
+            ;; Add effects
+            (
+                (holding ?item ?uav)
+                (has ?loc ?item (call - ?itemAmount 1))
+            )
+        )
+        
+        (:operator (!give ?location ?uav ?item)
+            ;; Preconditions
+            (
+                (location ?location) (uav ?uav)
+                (at ?uav ?location)
+                (holding ?item ?uav)
+                (need ?location ?item ?amount)
+                (call >= ?amount 1)
+            )
+            
+            ;; Delete effects
+            (
+                (holding ?item ?uav) 
+                (need ?location ?item ?amount)
+            )
+            
+            ;; Add effects
+            (
+                (free ?uav)
+                (need ?location ?item (call - ?amount 1))
+            ) 
+        )
+
+        (:operator (!move_uav ?uav ?to-location)
+            ;; Preconditions
+            (
+                (uav ?uav) (location ?to-location)
+                (at ?uav ?from-location)
+                (different ?from-location ?to-location)
+            )
+            
+            ;; Delete effects
+            (
+                (at ?uav ?from-location)
+            )
+            
+            ;; Add effects
+            (
+                (at ?uav ?to-location)
+            )
+        )
+        
+;;        (:operator (!init_uav ?uav ?loc)
+;;            ;; Preconditions
+;;            (
+;;                (location ?loc)
+;;            )
+;;            
+;;            ;; Delete effects
+;;            ()
+;;
+;;            ;; Add effects
+;;            (
+;;                (uav ?uav)
+;;                (at ?uav ?loc)
+;;                (free ?uav)
+;;            )
+;;        )
+;;        (:operator (!init_carrier ?carrier ?loc ?cap)
+;;            ;; Preconditions
+;;            (
+;;                (location ?loc)
+;;                (call >= ?cap 2) 
+;;            )
+;;            
+;;            ;; Delete effects
+;;            ()
+;;
+;;            ;; Add effects
+;;            (
+;;                (carrier ?carrier)
+;;                (at ?carrier ?loc)
+;;                (capacity ?carrier ?cap)
+;;                (current_load ?carrier 0)
+;;            )
+;;        )
+        ;;;------------------------------------------------------------
+        ;; actual AI planning methods
+
+        (:method (make_delivery ?location ?item)
+        location_GT_1_Item
+                (
+                    (need ?location ?item ?itemAmount)
+                    (call > ?itemAmount 1)
+                ) (
+                    (deliverMultiple ?location ?item ?itemAmount)
+                ) 
+        location_EQ_1_Item
+                (
+                    (need ?location ?item ?itemAmount)
+                    (call = ?itemAmount 1)
+                ) (
+                    (find ?item)
+                    (deliver ?location ?item)
+                    
+                )
+       )
+       (:method (deliver ?location ?item)
+        uav_in_location
+                (
+                    (at ?uav ?location)
+                    (holding ?item ?uav)
+                    (need ?location ?item ?itemAmount)
+                    (call >= ?itemAmount 1)
+                ) (
+                    (!give ?location ?uav ?item)
+                )
+
+        uav_not_in_location
+                (
+                    (at ?uav ?loc1)
+                    (holding ?item ?uav)
+                    (need ?location ?item ?itemAmount)
+                    (call >= ?itemAmount 1)
+                ) (
+                    (!move_uav ?uav ?location) 
+                    (!give ?location ?uav ?item)
+                )
+       )
+
+        (:method (find ?item)
+            uav_in_location
+                (
+                    (uav ?uav)
+                    (at ?uav ?loc)
+                    (has ?loc ?item ?amount)
+                    (call >= ?amount 1)
+                ) (
+                    (!pickup ?loc ?uav ?item)
+                )
+            uav_not_in_location
+                (
+                    (uav ?uav)
+                    (at ?uav ?loc1)
+                    (has ?loc2 ?item ?amount)
+                    (call >= ?amount 1)
+                ) (
+                    (!move_uav ?uav ?loc2) 
+                    (!pickup ?loc2 ?uav ?item)
+                )
+        )
+
+        (:method (do_all_deliver)
+        make_delivers
+            (
+                (need ?location ?item ?amount)
+                (call >= ?amount 1)
+            ) (
+                (make_delivery ?location ?item)
+                (do_all_deliver)
+            )
+            ()()
+        )
+
+        ;;;------------------------------------------------------------
+        ;; Axioms
+
+        (:- (same ?x ?x) nil)
+        (:- (different ?x ?y) ((not (same x? y?))))
+    )
+)

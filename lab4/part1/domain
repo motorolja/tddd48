@@ -1,53 +1,135 @@
 (defdomain domain
     (
-        (:operator (!pickup ?item ?uav) 
+        (:operator (!pickup ?item ?uav ?loc) 
             ;; Preconditions
-            (and (at ?item ?location) (and (at ?uav ?location) (free ?uav) ) )
+            (
+                (uav ?uav) (pickable ?item)
+                (at ?item ?loc) (at ?uav ?loc)
+                (free ?uav)
+            )
             
             ;; Delete effects
-            ((free ?uav)) 
+            (
+                (free ?uav)
+                (at ?item ?loc)
+            )
             
             ;; Add effects
-            ((holding ?item ?uav))
+            (
+                (holding ?item ?uav)
+            )
         )
         
-        (:operator (!deliver ?item ?person ?uav)
+        (:operator (!give ?item ?person ?uav ?location)
             ;; Preconditions
-            (and (holding ?item ?uav) (and (at ?person ?location) (and (at ?uav
-            ?location) (need ?person ?item) ) ) ) 
+            (
+                (person ?person) (uav ?uav)
+                (at ?person ?location) (at ?uav ?location)
+                (holding ?item ?uav)
+                (has ?item ?content)
+                (need ?person ?content) 
+            )
             
             ;; Delete effects
-            (and (have ?item ?uav) (need ?person ?item) )
+            (
+                (holding ?item ?uav) 
+                (need ?person ?content)
+                (has ?item ?content)
+            )
             
             ;; Add effects
-            () 
+            (
+                (free ?uav)
+            ) 
         )
 
-        (:operator (!move ?uav ?to-location)
+        (:operator (!move ?uav ?from-location ?to-location)
             ;; Preconditions
-            (and (not (at ?uav ?to-location) ) )
+            (
+                (uav ?uav) (location ?to-location)
+                (at ?uav ?from-location)
+                (different ?from-location ?to-location)
+            )
             
             ;; Delete effects
-            (and (have ?item ?uav) (and (need ?person ?item) 
-            (forall (?l) (at ?uav ?l) (at ?uav ?l) ) ) )
+            (
+                (at ?uav ?from-location)
+            )
             
             ;; Add effects
-            (and (at ?uav ?to-location) )
+            (
+                (at ?uav ?to-location)
+            )
+        )
+        
+        ;;;------------------------------------------------------------
+        ;; actual AI planning methods
+
+        (:method (deliver ?person ?content)
+        uav_has_item_and_in_place
+                (
+                    (at ?uav ?location)
+                    (at ?person ?location)
+                    (holding ?item ?uav)
+                    (has ?item ?content)
+                    (need ?person ?content)
+                ) (
+                    (!give ?item ?person ?uav ?location)
+                )
+
+        uav_has_item_not_in_place
+                (
+                    (at ?uav ?loc1)
+                    (at ?person ?loc2)
+                    (holding ?item ?uav)
+                    (has ?item ?content)
+                    (need ?person ?content)
+                ) (
+                    (!move ?uav ?loc1 ?loc2) 
+                    (deliver ?person ?content)
+                )
+
+        uav_need_item
+                () (
+                    (find ?content) 
+                    (deliver ?person ?content)
+                )
+        )
+        
+        (:method (find ?content)
+            uav_in_location
+                (
+                    (uav ?uav)
+                    (at ?uav ?location)
+                    (at ?item ?location)
+                    (has ?item ?content)
+                )((!pickup ?item ?uav ?location))
+            uav_not_in_location
+                (
+                    (uav ?uav)
+                    (at ?uav ?loc1)
+                    (at ?item ?loc2)
+                    (has ?item ?content)
+                ) (
+                    (!move ?uav ?loc1 ?loc2) 
+                    (find ?content)
+                )
         )
 
-        (:operator (!deliver ?item ?location ?person ?uav)
-            ;; Preconditions
-            (and (holding ?item ?uav) (and (at ?person ?location) (and (at ?uav
-            ?location) (need ?person ?item) ) ) ) 
-            
-            ;; Delete effects
-            (and (have ?item ?uav) (need ?person ?item) )
-            
-            ;; Add effects
-            () 
+        (:method (do_all_deliver)
+        make_delivers
+            (
+                (need ?p ?t)
+            ) (
+                (deliver ?p ?t)
+                (do_all_deliver)
+            )
+            ()()
         )
+        ;;;------------------------------------------------------------
+        ;; Axioms
 
-
+        (:- (same ?x ?x) nil)
+        (:- (different ?x ?y) ((not (same x? y?))))
     )
-
 )

@@ -11,3 +11,5 @@ elapsed.time
 content
 *.zip
 
+*.class
+*.java

@@ -1,3 +1,11 @@
+NOTE:
+    Use "./testhelper.py --build" to build all tests in
+        "testCases.info"
+    The provided "testCases.info" in each part contains the parameters
+    for which the problem domains are generated.
+
+####################################################################
+####################################################################
 3.1
 Which sequential planners generate plans that actually make use of all
 agents?  Does it seem like there would be room for improvement?
