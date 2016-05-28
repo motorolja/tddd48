@@ -1,0 +1,10 @@
+(reset-domains)
+(set-search-limit 100000)
+(set-trace-level 1)
+(verbose-on)
+(enable pddl-support)
+(def-domain emergency "Emergency Services Logistics Domain." "emergency_domain.tlp")
+(load-pddl-problem "emergency_problem.pddl")
+(plan)
+(exit)
+

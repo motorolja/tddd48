@@ -1,0 +1,432 @@
+(defdomain domain
+    (
+        ; picks an item up with a worker
+        (:operator (!pickup ?location ?worker ?item)
+            ;; Preconditions
+            (
+                (free ?worker)
+                (at ?worker ?location)
+                (has ?location ?item ?itemAmount)
+                (call >= ?itemAmount 1)
+            )
+            
+            ;; Delete effects
+            (
+                (free ?worker)
+                (has ?location ?item ?itemAmount)
+            )
+            
+            ;; Add effects
+            (
+                (holding ?worker ?item)
+                (has ?location ?item (call - ?itemAmount 1))
+            )
+        )
+        ; give an item that a uav is carrying to a given location
+        (:operator (!give ?location ?uav ?item)
+            ;; Preconditions
+            (
+                (location ?location) (uav ?uav)
+                (at ?uav ?location)
+                (holding ?uav ?item)
+                (need ?location ?item ?amount)
+                (total_need ?location ?tot)
+                (call >= ?amount 1)
+            )
+            
+            ;; Delete effects
+            (
+                (holding ?uav ?item) 
+                ;(has ?location ?item ?amount)
+                (need ?location ?item ?amount)
+                (total_need ?location ?tot)
+            )
+            
+            ;; Add effects
+            (
+                (free ?uav)
+                ;(has ?location ?item (call + ?amount 1))
+                (need ?location ?item (call - ?amount 1))
+                (total_need ?location (call - ?tot 1))
+            ) 
+        )
+        ; picks up a courier
+        (:operator (!pickup-courier ?uav ?courier)
+            ;; Preconditions
+            (
+                (uav ?uav)
+                (free ?uav)
+                (courier ?courier)
+                (at ?courier ?location)
+                (at ?uav ?location)
+            )
+            
+            ;; Delete effects
+            (
+                (free ?uav)
+                (at ?courier ?location)
+            )
+            
+            ;; Add effects
+            (
+                (holding ?uav ?courier)
+            )
+        )
+        ; inverse of pickup-courier
+        (:operator (!drop-courier ?uav)
+            ;; Preconditions
+            (
+                (uav ?uav) (courier ?courier)
+                (at ?uav ?location)
+                (holding ?uav ?courier)
+            )
+            
+            ;; Delete effects
+            (
+                (holding ?uav ?courier) 
+            )
+            
+            ;; Add effects
+            (
+                (free ?uav)
+                (at ?courier ?location)
+            ) 
+        )
+        ; only uav can move from two locations
+        (:operator (!move ?uav ?to-location)
+            ;; Preconditions
+            (
+                (uav ?uav) (location ?to-location)
+                (at ?uav ?from-location)
+                (different ?from-location ?to-location)
+            )
+            
+            ;; Delete effects
+            (
+                (at ?uav ?from-location)
+            )
+            
+            ;; Add effects
+            (
+                (at ?uav ?to-location)
+            )
+        )
+        (:operator (!load-item-to-courier ?worker ?courier)
+            ;; Precondtions
+            (
+                (courier ?courier) (item ?item)
+                (at ?worker ?location) (at ?courier ?location)
+                (capacity ?courier ?cap)
+                (load ?courier ?load)
+                (call > ?cap ?load)
+                (holding ?worker ?item)
+                (holding ?courier ?item ?amount)
+            )
+            
+            ;; Delete effects
+            (
+                (holding ?worker ?item)
+                (load ?courier ?load)
+                (holding ?courier ?item ?amount)
+            )
+            
+            ;; Add effects
+            (
+                (free ?worker)
+                (load ?courier (call + ?load 1))
+                (holding ?courier ?item (call + ?amount 1))
+            )
+        )
+
+        (:operator (!unload-item-from-courier ?uav ?courier ?item)
+            ;; Precondtions
+            (
+                (uav ?uav) (courier ?courier) (item ?item)
+                (at ?uav ?location) (at ?courier ?location)
+                (load ?courier ?load)
+                (holding ?courier ?item ?amount)
+                (call > ?amount 0)
+            )
+            
+            ;; Delete effects
+            (
+                (free ?uav)
+                (load ?courier ?load)
+                (holding ?courier ?item ?amount)
+            )
+            
+            ;; Add effects
+            (
+                (holding ?uav ?item)
+                (load ?courier (call - ?load 1))
+                (holding ?courier ?item (call - ?amount 1))
+            )
+        )
+        
+        ;;;------------------------------------------------------------
+        ;; actual AI planning methods
+
+        (:method (load-item ?item ?courier)
+        robot_same_loc
+                (
+                    (courier ?courier) (item ?item) (robot ?rob)
+                    (at ?courier ?location)
+                    (at ?rob ?location)
+                ) (
+                    (load-item ?item ?courier ?rob)
+                )
+        uav_same_loc
+                (
+                    (courier ?courier) (item ?item) (uav ?uav)
+                    (at ?courier ?location)
+                    (at ?uav ?location)
+                ) (
+                    (load-item ?item ?courier ?uav)
+                )
+        uav_different_loc
+                (
+                    (courier ?courier) (item ?item) (uav ?uav)
+                    (at ?courier ?location)
+                ) (
+                    (!move ?uav ?location)
+                    (load-item ?item ?courier ?uav)
+                )
+        )
+        (:method (load-item ?item ?courier ?worker)
+        item_same_loc
+                (
+                    (at ?courier ?location)
+                    (has ?location ?item ?amount)
+                    (call > ?amount 0)
+                ) (
+                    (!pickup ?location ?worker ?item)
+                    (!load-item-to-courier ?worker ?courier)
+                )
+        )
+
+        (:method (make_delivery ?location)
+        location_EQ_1_Item
+                (
+                    (total_need ?location ?tot)
+                    (need ?location ?item ?amount)
+                    (call = ?tot 1)
+                    (call = ?amount 1)
+                ) (
+                   (find ?item)
+                   (deliver ?location ?item)
+                )
+        location_GT_1_Item
+                (
+                    (total_need ?location ?tot)
+                    (call > ?tot 1)
+                ) (
+                    (load-and-deliver-courier-for-location ?location)
+                    ;(make_delivery ?location)
+                ) 
+        nothing_more_in_location
+                () ()
+       )
+
+            
+
+       (:method (load-and-deliver-courier-for-location ?location)
+        has_carrier_with_enough_capacity
+                (
+                    (courier ?courier)
+                    (capacity ?courier ?cap)
+                    (total_need ?location ?tot)
+                    (call >= ?cap ?tot)
+                ) (
+                    (load-courier-with-items-for-location ?location ?courier)
+                    (deliver-courier-for-location ?courier ?location)
+                    (return-courier-to-depot ?courier)
+                )
+        get_any_free_courier
+                (
+                    (courier ?courier)
+                ) (
+                    (load-courier-with-items-for-location ?location ?courier)
+                    (deliver-courier-for-location ?courier ?location)
+                    (return-courier-to-depot ?courier)
+                )
+       )
+
+       (:method (load-courier-with-items-for-location ?location ?courier)
+        fully_loaded
+            (
+                (capacity ?courier ?cap)
+                (load ?courier ?load)
+                (call = ?cap ?load)
+            ) ()
+        fill_courier
+            (
+                (need ?location ?item ?amount)
+                (holding ?courier ?item ?loaded)
+                (call > ?amount ?loaded)
+            ) (
+                (load-item ?item ?courier)
+                (load-courier-with-items-for-location ?location ?courier)
+            )
+        finished_loading
+            ()()
+       )
+       
+       (:method (deliver-courier-for-location ?courier ?location)
+        courier_not_in_location
+            (
+                (at ?courier ?location2)
+                (different ?location ?location2)
+            ) (
+                (move-courier ?courier ?location)
+                (deliver-courier-for-location ?courier ?location)
+            )
+        courier_has_delivers
+            (
+                (holding ?courier ?item ?amount)
+                (call > ?amount 0)
+                (uav ?uav)
+                (at ?uav ?location)
+            ) (
+                (!unload-item-from-courier ?uav ?courier ?item)
+                (!give ?location ?uav ?item)
+                (deliver-courier-for-location ?courier ?location)
+            )
+        courier_done
+            () ()
+       )
+
+       (:method (move-courier ?courier ?location)
+        uav_in_location
+            (
+                (at ?courier ?start)
+                (at ?uav ?start)
+                (uav ?uav)
+                (free ?uav)
+            ) (
+                (move-courier ?courier ?location ?uav)
+            )
+        uav_not_in_location
+            (
+                (at ?courier ?start)
+                (at ?uav ?other)
+                (uav ?uav)
+                (free ?uav)
+            ) (
+                (!move ?uav ?start)
+                (move-courier ?courier ?location ?uav)
+            )
+        )
+
+        (:method (move-courier ?courier ?location ?uav)
+         move_the_courier
+            () (
+                (!pickup-courier ?uav ?courier)
+                (!move ?uav ?location)
+                (!drop-courier ?uav)
+            )
+
+       )
+
+       (:method (return-uav-to-depot ?uav)
+        not_at_depot
+            (
+                (at ?uav ?current_location)
+                (depot ?depot)
+                (different ?current_location ?depot)
+                (uav ?uav)
+            ) (
+                (!move ?uav ?depot)
+            )
+        at_depot
+        () ()
+       )
+
+       (:method (return-courier-to-depot ?courier)
+        not_at_depot
+            (
+                (at ?courier ?current_location)
+                (depot ?depot)
+                (different ?current_location ?depot)
+                (at ?uav ?current_location)
+                (uav ?uav)
+                (free ?uav)
+            ) (
+                (!pickup-courier ?uav ?courier)
+                (!move ?uav ?depot)
+                (!drop-courier ?uav)
+            )
+        at_depot
+        () ()
+       )
+
+       (:method (deliver ?location ?item)
+        uav_in_location
+                (
+                    (at ?uav ?location)
+                    (holding ?uav ?item)
+                    (need ?location ?item ?itemAmount)
+                    (call >= ?itemAmount 1)
+                    (total_need ?location ?tot)
+                    (call = ?tot 1)
+                ) (
+                    (!give ?location ?uav ?item)
+                    (return-uav-to-depot ?uav)
+                )
+
+        uav_not_in_location
+                (
+                    (at ?uav ?location1)
+                    (holding ?uav ?item)
+                    (need ?location ?item ?itemAmount)
+                    (call >= ?itemAmount 1)
+                    (total_need ?location ?tot)
+                    (call = ?tot 1)
+                ) (
+                    (!move ?uav ?location) 
+                    (!give ?location ?uav ?item)
+                    (return-uav-to-depot ?uav)
+                )
+       )
+
+        (:method (find ?item)
+            uav_in_location
+                (
+                    (uav ?uav)
+                    (free ?uav)
+                    (at ?uav ?location)
+                    (has ?location ?item ?amount)
+                    (call >= ?amount 1)
+                ) (
+                    (!pickup ?location ?uav ?item)
+                )
+            uav_not_in_location
+                (
+                    (uav ?uav)
+                    (at ?uav ?location1)
+                    (has ?location2 ?item ?amount)
+                    (call >= ?amount 1)
+                ) (
+                    (!move ?uav ?location2) 
+                    (!pickup ?location2 ?uav ?item)
+                )
+        )
+
+        (:method (do_all_deliver)
+        make_delivers
+            (
+                (total_need ?location ?tot)
+                (call >= ?tot 1)
+            ) (
+                (make_delivery ?location)
+                (do_all_deliver)
+            )
+            ()()
+        )
+
+        ;;;------------------------------------------------------------
+        ;; Axioms
+
+        (:- (same ?x ?x) nil)
+        (:- (different ?x ?y) ((not (same ?x ?y))))
+    )
+)

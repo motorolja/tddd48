@@ -1,0 +1,105 @@
+(defproblem problem domain
+    ;;facts
+    (
+        ;; init item types
+        (item medicine)
+        (item food)
+        
+        ;; init locations
+        (location depot)
+        (depot depot)
+        (location loc1)
+        (location loc2)
+        (location loc3)
+        (location loc4)
+        (location loc5)
+        (location loc6)
+        (location loc7)
+        (location loc8)
+        (location loc9)
+        (location loc10)
+        (location loc11)
+        (location loc12)
+        (location loc13)
+        (location loc14)
+        (location loc15)
+        (location loc16)
+
+        ;; init items
+        (has depot medicine 1500)
+        (has depot food 500)
+        (need loc1 medicine 50)
+        (total_need loc1    50)
+
+        (need loc2 medicine 20)
+        (need loc2 food 80)
+        (total_need loc2    100)
+
+        (need loc3 medicine 25)
+        (total_need loc3    25)
+
+        (need loc4 medicine 5)
+        (total_need loc4    5)
+
+        (need loc5 medicine 5)
+        (total_need loc5    5)
+
+        (need loc6 medicine 5)
+        (total_need loc6    5)
+
+        (need loc7 medicine 5)
+        (total_need loc7    5)
+
+        (need loc8 medicine 5)
+        (total_need loc8    5)
+
+        (need loc9 medicine 5)
+        (total_need loc9    5)
+
+        (need loc10 medicine 5)
+        (total_need loc10    5)
+
+        (need loc11 medicine 5)
+        (total_need loc11    5)
+
+        (need loc12 medicine 5)
+        (total_need loc12    5)
+
+        (need loc13 medicine 5)
+        (total_need loc13    5)
+
+        (need loc14 medicine 5)
+        (total_need loc14    5)
+
+        (need loc15 medicine 5)
+        (total_need loc15    5)
+
+        (need loc16 medicine 5)
+        (total_need loc16    5)
+
+
+        ;;;; init robots
+        (robot rob1)
+        (worker rob1)
+        (at rob1 depot)
+        (free rob1)
+        
+        ;;;; init UAVs
+        (uav uav1)
+        (worker uav1)
+        (at uav1 depot)
+        (free uav1)
+
+        ;;;; init couriers
+        (courier dire_courier)
+        (at dire_courier depot)
+        (capacity dire_courier 4)
+        (load dire_courier 0)
+        (holding dire_courier medicine 0)
+        (holding dire_courier food 0)
+    )
+    ;;goals
+    (
+        (do_all_deliver)
+    )
+)

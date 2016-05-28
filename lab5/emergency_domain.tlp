@@ -1,0 +1,164 @@
+; Variable abbreviations:
+; c - carrier
+; l - location
+; t - resource type
+; u - uav
+; d - depot
+
+(clear-world-symbols)			;Remove old domain symbols
+
+(declare-described-symbols
+	;typing 
+	(predicate uav 1)
+	(predicate depot 1)
+	(predicate location 1)
+	(predicate type 1)
+	(predicate carrier 1)
+
+	;predicates
+	(predicate loc 2)
+	(predicate empty 1)
+	(predicate carrying 2)
+
+	;functions
+	(function boxcount 2)
+	(function used 1)
+	(function unused 1)
+	(function cratesUndelivered 2)
+)
+
+; (set-tl-control 
+	; (always (and 
+			
+			;Only pickup a type if there is some place to deliver it
+			; (forall (?u) (uav ?u) (?t) (type ?t)
+				; (implies (not(exists (?x) (location ?x) (not (= (cratesUndelivered ?t ?x) 0))))
+					; (next (not (carrying ?u ?t)))))
+
+			;Add more control rules here
+; )))					
+
+
+; Crates are picked up from the depot via this operator.
+(def-adl-operator (pick-up-crate ?u ?l ?d ?t)
+	(pre 
+		(?u) (uav ?u)
+		(?d) (depot ?d)
+		(?l) (location ?l)
+		(?t) (type ?t)
+		
+		(and 	(loc ?d ?l)
+				(loc ?u ?l)
+				(empty ?u)))
+	
+	(add	(carrying ?u ?t))
+	
+	(del 	(empty ?u))
+)		
+
+;Deliver a crate to a location where it is needed
+(def-adl-operator (put-down-crate ?u ?l ?t)
+	(pre 
+		(?u) (uav ?u)
+		(?l) (location ?l)
+		(?t) (type ?t)
+		
+		(and 	(loc ?u ?l)
+				(carrying ?u ?t)
+				(not (= (cratesUndelivered ?t ?l) 0))))
+	
+	(add	(-= (cratesUndelivered ?t ?l) 1)
+			(empty ?u))
+	
+	(del 	(carrying ?u ?t))
+)		
+
+;An empty UAV can picks up a carrier 
+(def-adl-operator (pick-up-carrier ?u ?c ?l)
+	(pre 
+		(?u) (uav ?u)
+		(?c) (carrier ?c)
+		(?l) (location ?l)
+		
+		(and 	(loc ?c ?l)
+				(loc ?u ?l)
+				(empty ?u)))
+	
+	(add	(carrying ?u ?c))
+	
+	(del 	(empty ?u) (loc ?c ?l))
+)
+
+;A UAV holding a carrier can put it down
+(def-adl-operator (put-down-carrier ?u ?c ?l)
+	(pre 
+		(?u) (uav ?u)
+		(?c) (carrier ?c)
+		(?l) (location ?l)
+		
+		(and 	(carrying ?u ?c)
+				(loc ?u ?l)))
+	
+	(add	(loc ?c ?l)
+			(empty ?u))
+	
+	(del 	(carrying ?u ?c))
+)
+          
+;A UAV holding a crate can put it on a carrier
+(def-adl-operator (load-carrier ?u ?c ?l ?t)
+	(pre
+		(?u) (uav ?u)
+		(?c) (carrier ?c)
+		(?l) (location ?l)
+		(?t) (type ?t)
+
+		(and  	(not (= (unused ?c) 0))
+				(loc ?c ?l)
+				(loc ?u ?l)
+				(carrying ?u ?t)))
+	(add
+			(+= (used ?c) 1)
+        	(-= (unused ?c) 1)
+            (+= (boxcount ?c ?t) 1)
+			(empty ?u))
+			
+	(del 
+			(carrying ?u ?t))
+)
+
+;Pick a crate from a carrier
+(def-adl-operator (unload-carrier ?u ?c ?l ?t)
+	(pre
+		(?u) (uav ?u)
+		(?c) (carrier ?c)
+		(?l) (location ?l)
+		(?t) (type ?t)
+
+		(and  	(empty ?u)
+				(loc ?c ?l)
+				(loc ?u ?l)
+				(not (= (boxcount ?c ?t) 0))))
+	(add
+			(-= (used ?c) 1)
+        	(+= (unused ?c) 1)
+            (-= (boxcount ?c ?t) 1)
+			(carrying ?u ?t))
+			
+	(del 
+			(empty ?u))
+)
+
+; Fly a UAV 
+(def-adl-operator (fly-to ?u ?from ?to)
+	(pre
+		(?u)    (uav ?u)
+		(?from) (location ?from)
+		(?to)   (location ?to)
+
+		(and  	(loc ?u ?from)))
+
+	(add	(loc ?u ?to))			
+			
+	(del 	(loc ?u ?from))
+)

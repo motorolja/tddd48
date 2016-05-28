@@ -1,0 +1,19 @@
+1. Compare building the HTN domain to what you did previously in PDDL.
+Was it easier/harder?
+Using HTN was a lot harder to do, since it required the writer to
+think about all possible actions and conditions that have to be
+fulfilled for each task that should be solvable.
+
+2. Is the JHOP2 faster/slower than the competition planners from previous
+labs?
+
+Much faster. (see explanation of why below)
+
+3. How does JSHOP2 run-times scale with larger problems?
+
+It scales very well. This is because we have provided the algorithm
+with all possible states and actions it can take. The result of this
+approach is that each state does not branch out anything, leaving a
+very thin and deep search tree which is optimized only as good as the
+writers skill.
+
