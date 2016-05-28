@@ -1,28 +1,39 @@
 (defproblem problem domain
     ;;facts
     (
+        ;; init item types
+        (item medicine)
+        (item food)
+        
         ;; init locations
         (location depot)
+        (depot depot)
         (location loc1)
 
         ;; init items
-        (has depot medicine 5)
+        (has depot medicine 15)
         (has depot food 5)
-        (need loc1 medicine 1)
-        (need loc1 food 1)
+        (need depot medicine 1)
+        (total_need depot 1)
+        (need loc1 medicine 5)
+        (total_need loc1 5)
 
 
         ;;;; init UAVs
-        ;;(uav uav1)
-        ;;(at uav1 depot)
-        ;;(free uav1)
-        ;;;;(!init_uav uav1 depot)
+        (uav uav1)
+        (at uav1 loc1)
+        (free uav1)
 
-        ;;;; init carriers
-        ;;;;(init_carrier depot car1 4)
+        ;;;; init couriers
+        (courier dire_courier)
+        (at dire_courier depot)
+        (capacity dire_courier 4)
+        (load dire_courier 0)
+        (holding dire_courier medicine 0)
+        (holding dire_courier food 0)
     )
-    ;;go;;als
+    ;;goals
     (
-        ;;(do_all_deliver)
+        (do_all_deliver)
     )
 )
