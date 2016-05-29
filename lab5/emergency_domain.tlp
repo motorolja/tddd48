@@ -42,60 +42,10 @@
                 )
             )
 
-		    (forall (?u) (uav ?u) (?l) (location ?l) (?t) (type ?t)
-		    	 (implies 
-                    (and
-                        (carrying ?u ?t)
-                        (not (= (cratesUndelivered ?t ?l) 1))
-                    )
-		    		( next 
-                        (not (loc ?u ?l))
-                    )
-                )
-            )
-
-		  ;  (forall (?u) (uav ?u) (?l) (location ?l) (?c) (carrier ?c)
-		  ;  	 (implies 
-          ;          (and
-          ;              (empty ?u)
-          ;              (loc ?u ?l)
-          ;              (loc ?c ?l)
-          ;              (not
-          ;                  (exists (?t) (type ?t)
-          ;                      (and
-          ;                          (> (cratesUndelivered ?t ?l) 0)
-          ;                          (> (boxcount ?c ?t) 0)
-          ;                      )
-          ;                  )
-          ;              )
-          ;          )
-		  ;  		( next 
-          ;              (carrying ?u ?c)
-          ;          )
-          ;      )
-          ;  )
-
-            ; if you have a carrier, do not go to a location without
-            ; anyone that needs creates
-            (forall (?u) (uav ?u) (?l) (location ?l) (?c) (carrier ?c)
-		    	 (implies 
-                    (and
-                        (carrying ?u ?c)
-                        ;(> (used ?c) 0)
-                        (not (loc ?u ?l))
-                        (exists (?t) (type ?t)
-                            (and
-                                (= (cratesUndelivered ?t ?l) 0)
-                                (> (boxcount ?c ?t) 0)
-                            )
-                        )
-                    )
-		    		( next 
-                        (not (loc ?u ?l))
-                    )
-                )
-            )
-		    (forall (?u) (uav ?u) (?l) (location ?l) (?t) (type ?t)
+        
+            ; rule forcing a uav to move to a location with only one
+            ; undelivered resource of a specific type missing
+		    (forall (?u) (uav ?u) (?t) (type ?t) (?l) (location ?l)
 		    	 (implies 
                     (and
                         (carrying ?u ?t)
@@ -103,32 +53,75 @@
                         (> (cratesUndelivered ?t ?l) 0)
                     )
 		    		( next 
-                        (empty ?u)
+                        (and
+                            (empty ?u)
+                        )
+                    )
+                )
+            )
+
+            ; rule forcing a uav to move to a location with only one
+            ; undelivered resource of a specific type missing
+		    (forall (?u) (uav ?u)(?t) (type ?t)
+		    	 (implies 
+                    (and
+                        (carrying ?u ?t)
+                        (exists (?l) (location ?l) (= (cratesUndelivered ?t ?l) 1))
+                        (not (exists (?l) (location ?l) (and (> (cratesUndelivered ?t ?l) 0) (loc ?u ?l))))
+                    )
+		    		( next 
+                        (exists (?l) (location ?l) (and (loc ?u ?l) (= (cratesUndelivered ?t ?l) 1))
+                        )
                     )
                 )
             )
 
 
-
-   	        (forall (?u) (uav ?u) (?l) (location ?l) (?d) (depot ?d)
-   	            (implies 
-                    (and
-                        (loc ?d ?l)
-                        (exists (?c) (carrier ?c) 
+            ; Some solution for using a carrier, it is working, but
+            ; not that well.
+            (forall (?c) (carrier ?c) (?u) (uav ?u) (?t) (type ?t)
+                (implies
+                    (and   
+                        (empty ?u)
+                        (< (unused ?c) 3)
+                        (> (boxcount ?c ?t) 1)
+                        (exists (?l) (location ?l) 
                             (and
-                                (carrying ?u ?c)
-                                (= (used ?c) 0)
+                                (loc ?u ?l)
+                                (loc ?c ?l)
+                                (not (> (cratesUndelivered ?t ?l) 0))
                             )
                         )
-                     )
-   	      		     (
-                         next (loc ?u ?l)
-                     )
+                        (exists (?l) (location ?l) 
+                            (and
+                                (> (boxcount ?c ?t) 0)
+                                (>= (boxcount ?c ?t) (cratesUndelivered ?t ?l) )
+                            )
+                        )
+                    )
+                    (next
+                        (and
+                            (carrying ?u ?c)
+                            (next
+                                (and
+                                    (exists (?l) (location ?l) 
+                                        (and 
+                                            (loc ?u ?l)
+                                            (> (cratesUndelivered ?t ?l) 0)
+                                            (>= (boxcount ?c ?t) (cratesUndelivered ?t ?l))
+                                        )
+                                    )
+                                    (next 
+                                        (and
+                                            (not (carrying ?u ?c) )
+                                        )
+                                    )
+                                )
+                            )
+                        )
+                    )
                 )
             )
-            
-
-			;Add more control rules here
  )))					
 
 
