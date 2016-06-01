@@ -30,7 +30,7 @@
  (set-tl-control 
 	 (always (and 
 			
-			;Only pickup a type if there is some place to deliver it
+; WORKING			;Only pickup a type if there is some place to deliver it
 	        (forall (?u) (uav ?u) (?t) (type ?t)
 		        (implies 
                     (and
@@ -42,7 +42,6 @@
                 )
             )
 
-        
             ; Drop carried item if uav is in a location where it is
             ; needed
 		    (forall (?u) (uav ?u) (?t) (type ?t) (?l) (location ?l)
@@ -77,11 +76,24 @@
                 )
             )
 
-            ; Return uav to depot if it is not in there and is empty
+            ; Return uav to depot if it is not in a depot and uav is
+            ; empty or holding an empty carrier
+            ; and there is no carrier in the location
 	        (forall (?u) (uav ?u) (?l) (location ?l)
 	        	 (implies 
                     (and
-                        (empty ?u)
+                        (or
+                            (empty ?u)
+                            (exists (?c) (carrier ?c)
+                                (and
+                                    (carrying ?u ?c)
+                                    (= (used ?c) 0)
+                                )
+                            )
+                        )
+                        (not (exists (?c) (carrier ?c)
+                            (loc ?c ?l)
+                        ))
                         (not (exists (?d) (depot ?d)
                             (loc ?d ?l)
                         ))
@@ -91,6 +103,25 @@
                     )
                 )
             )
+
+; UNCHECKED            ; Pick up empty carrier if outside of depot
+            (forall (?c) (carrier ?c) (?u) (uav ?u) (?l) (location ?l)
+                (implies
+                    (and
+                        (not (exists (?d) (depot ?d)
+                            (loc ?d ?l)
+                        ))
+                        (empty ?u)
+                        (loc ?u ?l)
+                        (loc ?c ?l)
+                        (= (used ?c) 0)
+                    )
+                    (next
+                        (carrying ?u ?c)
+                    )
+                )
+            )
+
 
             ; rule forcing a uav to move to a location with only one
             ; undelivered resource of a specific type missing
@@ -102,13 +133,14 @@
                         (not (exists (?l) (location ?l) (and (> (cratesUndelivered ?t ?l) 0) (loc ?u ?l))))
                     )
 		    		( next 
-                        (exists (?l) (location ?l) (and (loc ?u ?l) (= (cratesUndelivered ?t ?l) 1))
-                        )
+                        ( exists (?l) (location ?l) (and (loc ?u ?l) (= (cratesUndelivered ?t ?l) 1)))
                     )
                 )
             )
+
             ; rule not allowing uav to go to a location where there is
-            ; already another uav
+            ; already another uav, excluding if there is a depot in
+            ; that location
             (forall (?u) (uav ?u) (?l) (location ?l)
                 (implies
                     (and
@@ -129,21 +161,7 @@
                     )
                 )
             )
-       ;     ; rule forcing a uav to return to depot if no uav is
-       ;     ; carrying any resource/carrier
-	   ;     (forall (?u) (uav ?u)(?t) (type ?t)
-	   ;     	 (implies 
-       ;             (and
-       ;                 (empty ?u)
-       ;                 (exists (?u2) ( ?u2) (= (cratesUndelivered ?t ?l) 1))
-       ;                 (not (exists (?l) (location ?l) (and (> (cratesUndelivered ?t ?l) 0) (loc ?u ?l))))
-       ;             )
-	   ;     		( next 
-       ;                 (exists (?l) (location ?l) (and (loc ?u ?l) (= (cratesUndelivered ?t ?l) 1))
-       ;                 )
-       ;             )
-       ;         )
-       ;     )
+
             ; rule not allowing a uav to pick up something if there is
             ; one already holding in something
             (forall (?u) (uav ?u)
@@ -160,8 +178,110 @@
                 )
             )
 
-            ; rule not allowing a uav to pick up an item if a carrier
-            ; has enough to deliver to a location
+
+; UNUSED            ; rule picking up carrier
+;            (forall (?u) (uav ?u) (?c) (carrier ?c)
+;                (implies
+;                    (and
+;                        (< (unused ?c) 3)
+;                        (exists (?l) (location ?l)
+;                            (and
+;                                (loc ?c ?l)
+;                                (exists (?d) (depot ?d)
+;                                    (and
+;                                        (loc ?d ?l)
+;                                    )
+;                                )
+;                            )
+;                        )
+;                    )
+;                    (next
+;                        (and
+;                            (not(exists (?l) (location ?l)
+;                                (and
+;                                    (loc ?c ?l)
+;                                )
+;                            ))
+;                        )
+;                    )
+;                )
+;            )
+
+
+            ; do not go to a location with single item if not only one
+            ; item is needed
+            (forall (?u) (uav ?u) (?t) (type ?t) (?l) (location ?l)
+                (implies
+                    (and
+                        (carrying ?u ?t)
+                        (not (loc ?u ?l))
+                        (not (= (cratesUndelivered ?t ?l) 1))
+                    )
+                    (next
+                        (not (loc ?u ?l))
+                    )
+                )
+            )
+
+            ; rule to not pick up items if a carrier is fully loaded
+            ; for delivery
+            
+            
+; UNCHECKED            ; If carrier in location with items, unload if needed
+            (forall (?c) (carrier ?c) (?u) (uav ?u) (?t) (type ?t)
+            (?l) (location ?l)
+                (implies
+                    (and
+                        (empty ?u)
+                        (> (boxcount ?c ?t) 0)
+                        (> (cratesUndelivered ?t ?l) 0)
+                        (loc ?u ?l)
+                        (loc ?c ?l)
+                    )
+                    (next
+                        (carrying ?u ?t)
+                    )
+                )
+            )
+
+; UNCHECKED            ; rule to load only a single carrier
+            (forall (?c) (carrier ?c)
+                (implies
+                    (and
+                        (exists (?c2) (carrier ?c2)
+                            (and
+                                (> (used ?c2) (used ?c))
+                            )
+                        )
+                    )
+                    (next
+                        (and
+                            (= (used ?c) 0)
+                        )
+                    )
+                )
+            )
+
+; UNCHECKED            ; rule for moving a loaded carrier to a location
+            (forall (?c) (carrier ?c) (?u) (uav ?u) (?l) (location ?l)
+                (implies
+                    (and
+                        (carrying ?u ?c)
+                        (not (loc ?u ?l))
+                        (not(exists (?t) (type ?t)
+                            (and
+                                (> (boxcount ?c ?t) 0)
+                                (= (boxcount ?c ?t) (cratesUndelivered ?t ?l))
+                            )
+                        ))
+                    )
+                    (next
+                        (not (loc ?u ?l))
+                    )
+                )
+            )
+
+
 
             ; Solution for picking up a carrier
             (forall (?c) (carrier ?c) (?u) (uav ?u) (?t) (type ?t) (?l) (location ?l)
