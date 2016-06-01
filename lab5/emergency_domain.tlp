@@ -79,46 +79,23 @@
 
             ; Some solution for using a carrier, it is working, but
             ; not that well.
-            (forall (?c) (carrier ?c) (?u) (uav ?u) (?t) (type ?t)
+            (forall (?c) (carrier ?c) (?u) (uav ?u) (?t) (type ?t) (?l) (location ?l)
                 (implies
                     (and   
                         (empty ?u)
                         (< (unused ?c) 3)
-                        (> (boxcount ?c ?t) 1)
-                        (exists (?l) (location ?l) 
+                        (> (boxcount ?c ?t) 0)
+                        (>= (boxcount ?c ?t) (cratesUndelivered ?t ?l) )
+                        (exists (?l2) (location ?l2) 
                             (and
-                                (loc ?u ?l)
-                                (loc ?c ?l)
-                                (not (> (cratesUndelivered ?t ?l) 0))
-                            )
-                        )
-                        (exists (?l) (location ?l) 
-                            (and
-                                (> (boxcount ?c ?t) 0)
-                                (>= (boxcount ?c ?t) (cratesUndelivered ?t ?l) )
+                                (loc ?u ?l2)
+                                (loc ?c ?l2)
+                                (not (> (cratesUndelivered ?t ?l2) 0))
                             )
                         )
                     )
                     (next
-                        (and
-                            (carrying ?u ?c)
-                            (next
-                                (and
-                                    (exists (?l) (location ?l) 
-                                        (and 
-                                            (loc ?u ?l)
-                                            (> (cratesUndelivered ?t ?l) 0)
-                                            (>= (boxcount ?c ?t) (cratesUndelivered ?t ?l))
-                                        )
-                                    )
-                                    (next 
-                                        (and
-                                            (not (carrying ?u ?c) )
-                                        )
-                                    )
-                                )
-                            )
-                        )
+                        (carrying ?u ?c)
                     )
                 )
             )
